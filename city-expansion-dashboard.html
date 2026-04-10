@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>消费医疗地市拓展专项</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:#f0f2f5;min-height:100vh}
+
+.top-bar{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);color:white;padding:20px 40px;display:flex;justify-content:space-between;align-items:center}
+.top-bar h1{font-size:22px;font-weight:700}
+.top-bar .meta{font-size:13px;opacity:.7}
+
+.container{max-width:1600px;margin:0 auto;padding:20px}
+
+/* 大盘指标 */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:white;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.kpi .lab{font-size:12px;color:#888;margin-bottom:6px}
+.kpi .val{font-size:26px;font-weight:700;color:#1a1a2e}
+.kpi .sub{font-size:12px;margin-top:4px;color:#888}
+.kpi.hl{background:linear-gradient(135deg,#667eea,#764ba2);color:white}
+.kpi.hl .lab,.kpi.hl .sub{color:rgba(255,255,255,.8)}
+.kpi.hl .val{color:white}
+.kpi.warn{border-left:4px solid #ef4444}
+
+/* 图例 */
+.legend-bar{display:flex;gap:24px;margin-bottom:14px;font-size:12px;color:#555;align-items:center;flex-wrap:wrap}
+.legend-bar .dot{width:12px;height:12px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:4px}
+
+/* 表格 */
+.table-wrap{background:white;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow-x:auto;margin-bottom:24px}
+table.main{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#f8f9fb;padding:10px 5px;text-align:left;font-weight:600;color:#555;border-bottom:2px solid #e0e0e0;white-space:nowrap;position:sticky;top:0;z-index:2}
+thead th:first-child,tbody td:first-child{padding-left:12px}
+thead th.center{text-align:center}
+thead th.gap,tbody td.gap{width:40px;padding:0}
+tbody td{padding:10px 5px;border-bottom:1px solid #f0f0f0;white-space:nowrap}
+tbody tr:hover{background:#f8faff}
+tbody tr.group-first td{border-top:2px solid #d0d0d0}
+td.center{text-align:center}
+
+/* 省区名+优先级 */
+.prov{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.prov:hover .prov-name{color:#667eea;text-decoration:underline}
+.prov-name{font-weight:700;font-size:14px;color:#1a1a2e;text-decoration:underline;text-decoration-color:#ccc;text-underline-offset:3px}
+.pri{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;color:white;line-height:18px}
+.pri.t0{background:#dc2626}
+.pri.t1{background:#f97316}
+.pri.t2{background:#94a3b8}
+
+/* 标注 */
+.below{display:inline-block;background:#fef2f2;color:#dc2626;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;margin-left:4px}
+.row-warn{background:#fef9f9 !important}
+
+/* 进度条 */
+.bar-wrap{width:110px;height:18px;background:#e5e7eb;border-radius:9px;overflow:hidden;display:inline-block;vertical-align:middle}
+.bar-fill{height:100%;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;min-width:28px}
+.bar-fill.ok{background:linear-gradient(90deg,#667eea,#764ba2)}
+.bar-fill.bad{background:linear-gradient(90deg,#f97316,#ef4444)}
+
+/* 同比 */
+.yoy-up{color:#22c55e;font-weight:600}
+.yoy-down{color:#ef4444;font-weight:600}
+
+/* 弹窗 */
+.mask{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center}
+.mask.show{display:flex}
+.dialog{background:white;width:92%;max-width:1100px;max-height:85vh;border-radius:14px;overflow-y:auto;padding:28px}
+.dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #e0e0e0}
+.dialog-head h2{font-size:20px;color:#1a1a2e}
+.x-btn{font-size:26px;cursor:pointer;color:#666;background:none;border:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.x-btn:hover{background:#f0f0f0}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:20px}
+.info-card{background:#f8f9fb;padding:14px;border-radius:10px}
+.info-card .l{font-size:11px;color:#888;margin-bottom:4px}
+.info-card .v{font-size:18px;font-weight:700;color:#1a1a2e}
+.sp-tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+.sp-tbl th{background:#f8f9fb;padding:8px 10px;text-align:left;font-weight:600;color:#555;border-bottom:1px solid #e0e0e0}
+.sp-tbl td{padding:8px 10px;border-bottom:1px solid #f0f0f0}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <h1>消费医疗地市拓展专项</h1>
+    <div class="meta">地市拓客专项 · 阶段性进展（截止 3.31）</div>
+  </div>
+</div>
+<div class="container">
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="legend-bar">
+    <span><span class="dot" style="background:#dc2626"></span>T0 最高优先级</span>
+    <span><span class="dot" style="background:#f97316"></span>T1 高优先级</span>
+    <span><span class="dot" style="background:#94a3b8"></span>T2 关注</span>
+    <span><span class="dot" style="background:#fef2f2;border:1px solid #ef4444"></span>低于大盘（红色高亮行）</span>
+    <span style="margin-left:auto;color:#888;font-size:11px">点击省区名可下钻查看服务商明细</span>
+  </div>
+
+  <div class="table-wrap">
+    <table class="main">
+      <thead>
+        <tr>
+          <th>大区</th>
+          <th>省区</th>
+          <th>广告主数进展 (S)</th>
+          <th class="center">广告主数目标进度 (T)</th>
+          <th class="center">广告主数同比</th>
+          <th class="gap"></th>
+          <th>日耗进展 (U)</th>
+          <th class="center">日耗目标进度 (V)</th>
+          <th class="center">日耗同比</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="mask" id="mask">
+  <div class="dialog">
+    <div class="dialog-head">
+      <h2 id="dlgTitle">-</h2>
+      <button class="x-btn" onclick="closeDlg()">×</button>
+    </div>
+    <div id="dlgBody"></div>
+  </div>
+</div>
+
+<script>
+const D = [
+  {rg:"业务二组",pv:"安徽区",s:42,t:.7455,u:42118.59,v:.7537,d:58,c:36593.05,tAdv:55,tSpd:54000,
+   sp:[{n:"微盟",i:7336.62,j:19,nAdv:26,nSpd:20000,city:"安庆、阜阳、蚌埠",ag:.3,sg:.939,need:"解决安徽成本高转化低的问题",ytdAdv:23,ytdSpd:25105.85},
+       {n:"新疆云景",i:13840.31,j:22,nAdv:29,nSpd:34000,city:"芜湖、滁州",ag:.074,sg:1.29,ytdAdv:24,ytdSpd:16840.66}]},
+  {rg:"业务二组",pv:"东北区",s:37,t:.9189,u:93734.9,v:.9796,d:45,c:80679.84,tAdv:37,tSpd:90000,
+   sp:[{n:"大连盟聚",i:21711.32,j:12,nAdv:15,nSpd:30000,city:"大连、吉林市、齐齐哈尔",ag:.25,sg:.225,need:"持牌服务商7.1w，剩余靠非框",ytdAdv:22,ytdSpd:30192.91},
+       {n:"黑龙江财纳康姆斯",i:41.7,j:1,nAdv:2,nSpd:1000,city:"齐齐哈尔",ag:1,sg:1.15,ytdAdv:2,ytdSpd:4316.63},
+       {n:"蓝桥科技",i:3430.95,j:1,nAdv:2,nSpd:5000,city:"朝阳市、锦州",ag:1,sg:.28,ytdAdv:2,ytdSpd:4758.44},
+       {n:"上海亦芯",i:21762.73,j:10,nAdv:16,nSpd:30000,city:"吉林、哈尔滨、长春",ag:.143,sg:.171,ytdAdv:12,ytdSpd:53908.27},
+       {n:"央企贝力",i:0,j:0,nAdv:2,nSpd:5000,city:"吉林市",ag:2,sg:0,ytdAdv:2,ytdSpd:553.02}]},
+  {rg:"业务二组",pv:"冀豫区",s:58,t:.5278,u:70447.65,v:.9640,d:90,c:64922.25,tAdv:108,tSpd:70000,
+   sp:[{n:"成功易",i:19193.5,j:14,nAdv:18,nSpd:25000,city:"唐山、廊坊",ag:.2,sg:.107,ytdAdv:15,ytdSpd:27337.12},
+       {n:"广联先锋",i:11975.68,j:21,nAdv:25,nSpd:18000,city:"邯郸、衡水、沧州、唐山",ag:.19,sg:.305,ytdAdv:21,ytdSpd:19562.12},
+       {n:"河北中商",i:10110.08,j:12,nAdv:20,nSpd:15000,city:"保定、邯郸、张家口",ag:.429,sg:.312,ytdAdv:7,ytdSpd:17209.32},
+       {n:"河南优众广告",i:4634.58,j:20,nAdv:25,nSpd:8000,city:"洛阳、许昌、南阳、濮阳、焦作",ag:.19,sg:.692,ytdAdv:10,ytdSpd:2132.69},
+       {n:"河南云网",i:359.56,j:3,nAdv:10,nSpd:2000,city:"洛阳、信阳、许昌",ag:1.5,sg:3.301,ytdAdv:8,ytdSpd:1647.92},
+       {n:"微盟",i:261.82,j:5,nAdv:10,nSpd:2000,city:"洛阳、南阳、信阳",ag:.667,sg:5.367,ytdAdv:5,ytdSpd:1981.72}]},
+  {rg:"业务二组",pv:"江苏区",s:110,t:.6000,u:395028.88,v:1.0792,d:158,c:339935.36,tAdv:170,tSpd:350000,
+   sp:[{n:"博风采",i:675.16,j:3,nAdv:8,nSpd:15000,city:"无锡、盐城、徐州",ag:1.667,sg:5.164,ytdAdv:9,ytdSpd:16936.08},
+       {n:"初见信息",i:58197.06,j:43,nAdv:60,nSpd:85000,city:"无锡、盐城",ag:.154,sg:.304,ytdAdv:40,ytdSpd:79103.5},
+       {n:"上海亦芯",i:14607.16,j:17,nAdv:25,nSpd:50000,city:"无锡、扬州、常州",ag:.25,sg:1.501,ytdAdv:26,ytdSpd:68566.89},
+       {n:"微盟",i:142883.27,j:64,nAdv:77,nSpd:200000,city:"苏州、南通",ag:.055,sg:.272,ytdAdv:61,ytdSpd:230422.41}]},
+  {rg:"业务二组",pv:"山东区",s:91,t:.6617,u:145616.27,v:.9008,d:129,c:137786.31,tAdv:133,tSpd:156900,
+   sp:[{n:"成功易",i:108.06,j:2,nAdv:3,nSpd:1000,city:"青岛",ag:.5,sg:5.657,ytdAdv:3,ytdSpd:1724.51},
+       {n:"飞天经纬",i:19029.71,j:20,nAdv:28,nSpd:30000,city:"青岛、淄博",ag:.217,sg:.356,ytdAdv:15,ytdSpd:23497.03},
+       {n:"微盟",i:38526.12,j:34,nAdv:45,nSpd:60000,city:"青岛、济南、潍坊",ag:.154,sg:.281,ytdAdv:34,ytdSpd:51345.82},
+       {n:"易搜信息",i:35684.9,j:37,nAdv:57,nSpd:65000,city:"青岛、威海、淄博",ag:.213,sg:.477,ytdAdv:53,ytdSpd:69048.91}]},
+  {rg:"业务二组",pv:"陕晋蒙区",s:70,t:.8118,u:89428.98,v:1.0179,d:106,c:76880.22,tAdv:85,tSpd:85000,
+   sp:[{n:"山西华通",i:4345.23,j:6,nAdv:13,nSpd:8000,city:"",ag:.444,sg:.403,ytdAdv:14,ytdSpd:7866.4},
+       {n:"山西正方元",i:12003.82,j:21,nAdv:36,nSpd:28000,city:"太原、运城、临汾、大同、包头、赤峰、鄂尔多斯",ag:.161,sg:.965,ytdAdv:37,ytdSpd:31375.24},
+       {n:"微盟",i:22566.24,j:10,nAdv:12,nSpd:28000,city:"宝鸡、渭南、汉中、榆林",ag:.2,sg:.182,ytdAdv:11,ytdSpd:29148.79},
+       {n:"新疆云景",i:2610.05,j:7,nAdv:14,nSpd:7000,city:"宝鸡、运城",ag:.75,sg:.602,ytdAdv:13,ytdSpd:6691.11},
+       {n:"直效文化传媒",i:3453.77,j:8,nAdv:10,nSpd:14000,city:"",ag:-.091,sg:1.145,ytdAdv:8,ytdSpd:14310.74}]},
+  {rg:"业务二组",pv:"西北区",s:25,t:.8846,u:20708.52,v:.8784,d:33,c:17917.29,tAdv:26,tSpd:23000,
+   sp:[{n:"新疆云景",i:9182.99,j:12,nAdv:26,nSpd:23000,city:"酒泉、武威、张掖、喀什",ag:.529,sg:1.048,ytdAdv:23,ytdSpd:19503.82}]},
+  {rg:"业务二组",pv:"浙江区",s:120,t:.7733,u:264962.35,v:.7887,d:177,c:233412.73,tAdv:150,tSpd:320000,
+   sp:[{n:"杭州品效",i:10435.79,j:26,nAdv:30,nSpd:20000,city:"温州",ag:.111,sg:.838,ytdAdv:13,ytdSpd:12477.45},
+       {n:"上海亦芯",i:14393.78,j:21,nAdv:35,nSpd:80000,city:"金华",ag:.25,sg:2.864,ytdAdv:31,ytdSpd:58492.61},
+       {n:"微盟",i:115818.43,j:93,nAdv:126,nSpd:250000,city:"宁波、嘉兴",ag:.223,sg:.819,ytdAdv:90,ytdSpd:175628.88},
+       {n:"易搜信息",i:2657.27,j:1,nAdv:4,nSpd:12000,city:"台州",ag:3,sg:2.797,ytdAdv:5,ytdSpd:6545.12}]},
+  {rg:"业务一组",pv:"广东区",s:122,t:.7091,u:430776.69,v:.9986,d:183,c:409053.37,tAdv:165,tSpd:410000,
+   sp:[{n:"成功易",i:13335.67,j:17,nAdv:30,nSpd:22000,city:"韶关、肇庆、茂名、英德",ag:.304,sg:.269,need:"定制化人群包需求",ytdAdv:22,ytdSpd:31256.9},
+       {n:"厚拓科技",i:22771.66,j:36,nAdv:25,nSpd:21000,city:"东莞、中山、潮州、湛江、茂名",ag:-.39,sg:.002,ytdAdv:19,ytdSpd:21004.05},
+       {n:"深圳天擎",i:52562.84,j:27,nAdv:60,nSpd:100000,city:"东莞、中山、佛山、珠海、湛江",ag:1.308,sg:.603,need:"有效率及成本波动问题解决方案",ytdAdv:14,ytdSpd:57116.31},
+       {n:"深圳云盟",i:75557.91,j:47,nAdv:70,nSpd:90000,city:"珠海、中山、东莞",ag:.296,sg:.101,need:"联动密切",ytdAdv:40,ytdSpd:112983.4},
+       {n:"微盟",i:51661.39,j:43,nAdv:55,nSpd:100000,city:"珠海、东莞、揭阳、佛山、江门",ag:.122,sg:.415,ytdAdv:53,ytdSpd:133769.05},
+       {n:"我买家",i:56776.67,j:26,nAdv:30,nSpd:80000,city:"佛山、江门、肇庆、韶关",ag:.111,sg:.330,need:"同质化素材误拒审问题，有效率及成本波动问题",ytdAdv:25,ytdSpd:73849.82}]},
+  {rg:"业务一组",pv:"福建区",s:61,t:.7429,u:114994.15,v:.8456,d:82,c:83315.02,tAdv:70,tSpd:130000,
+   sp:[{n:"福建搜讯",i:22931.84,j:24,nAdv:32,nSpd:43000,city:"厦门、漳州、泉州、龙岩",ag:.28,sg:.610,ytdAdv:24,ytdSpd:38208.79},
+       {n:"渠网在线",i:6675.43,j:11,nAdv:18,nSpd:19000,city:"厦门、漳州、泉州",ag:.8,sg:3.551,ytdAdv:14,ytdSpd:20200.0},
+       {n:"厦门微动力量传媒",i:1312.35,j:3,nAdv:8,nSpd:19000,city:"厦门、漳州、泉州",ag:1,sg:5.780,ytdAdv:2,ytdSpd:9046.93},
+       {n:"上海亦芯",i:258.84,j:1,nAdv:15,nSpd:25000,city:"厦门、漳州、泉州、龙岩",ag:4,sg:26.935,ytdAdv:17,ytdSpd:23825.91},
+       {n:"云赢信息",i:335.82,j:1,nAdv:28,nSpd:24000,city:"福州、厦门、宁德、莆田",ag:.12,sg:.243,ytdAdv:17,ytdSpd:23712.53}]},
+  {rg:"业务一组",pv:"鄂赣区",s:59,t:.6951,u:77245.06,v:.7757,d:94,c:63058.33,tAdv:82,tSpd:96000,
+   sp:[{n:"江西时刻互动",i:413.36,j:1,nAdv:30,nSpd:10000,city:"赣州、九江、上饶",ag:.25,sg:1.893,ytdAdv:22,ytdSpd:10080.23},
+       {n:"联合互赢",i:25.71,j:1,nAdv:19,nSpd:53000,city:"荆州、襄阳、宜昌",ag:.118,sg:1.685,ytdAdv:13,ytdSpd:44674.09},
+       {n:"微盟",i:12024.24,j:9,nAdv:11,nSpd:15000,city:"荆州、襄阳、孝感",ag:.1,sg:.294,ytdAdv:14,ytdSpd:10571.19},
+       {n:"武汉道森",i:11815.64,j:21,nAdv:25,nSpd:14000,city:"荆州、襄阳、咸宁",ag:.087,sg:.342,ytdAdv:12,ytdSpd:7301.63},
+       {n:"武汉领航",i:2787.43,j:5,nAdv:7,nSpd:4000,city:"襄阳、宜昌、十堰",ag:.4,sg:.469,ytdAdv:9,ytdSpd:4530.17}]},
+  {rg:"业务一组",pv:"桂黔琼区",s:45,t:.8400,u:55670.28,v:.8832,d:63,c:40032.29,tAdv:50,tSpd:60000,
+   sp:[{n:"黑天鹅",i:305.57,j:5,nAdv:7,nSpd:5000,city:"钦州、北海、防城港",ag:.167,sg:3.969,ytdAdv:4,ytdSpd:10419.56},
+       {n:"麦捷广告",i:13256.74,j:19,nAdv:23,nSpd:30000,city:"柳州、北海、玉林",ag:.095,sg:.922,need:"到院率提升方案",ytdAdv:22,ytdSpd:35491.55},
+       {n:"南宁和飞",i:1847.09,j:6,nAdv:8,nSpd:3000,city:"柳州、桂林、贵港、北海",ag:.143,sg:.229,ytdAdv:6,ytdSpd:2125.0},
+       {n:"磐石企服",i:0,j:0,nAdv:2,nSpd:2000,city:"安顺、黔西南、黔东南",ag:2,sg:0,ytdAdv:2,ytdSpd:1249.95},
+       {n:"易伙人",i:1251.44,j:12,nAdv:14,nSpd:5000,city:"毕节、遵义",ag:.167,sg:1.609,need:"到院率提升方案",ytdAdv:12,ytdSpd:6328.55}]},
+  {rg:"业务一组",pv:"湖南区",s:24,t:.7500,u:23351.36,v:.6552,d:32,c:18955.09,tAdv:32,tSpd:33000,
+   sp:[{n:"创研科技",i:2094.38,j:6,nAdv:7,nSpd:4000,city:"湘潭市、株洲市、娄底市",ag:0,sg:.460,ytdAdv:10,ytdSpd:7839.19},
+       {n:"湖南网众",i:346.3,j:4,nAdv:8,nSpd:12000,city:"怀化市、岳阳市、常德市",ag:.143,sg:7.971,need:"地市放全渠道无效人群包预估曝光量就很少，不放有效率很低",ytdAdv:3,ytdSpd:4560.78},
+       {n:"琉璃盒传媒",i:184.53,j:3,nAdv:3,nSpd:1000,city:"永州市",ag:0,sg:5.650,ytdAdv:1,ytdSpd:267.81},
+       {n:"微盟",i:9550.82,j:7,nAdv:12,nSpd:15000,city:"怀化市、娄底市、常德市",ag:.5,sg:.461,ytdAdv:9,ytdSpd:10150.22},
+       {n:"中国邮政",i:0.71,j:2,nAdv:2,nSpd:1000,city:"永州市",ag:0,sg:2583.6,ytdAdv:3,ytdSpd:533.37}]},
+  {rg:"业务一组",pv:"四川区",s:56,t:.7287,u:101309.34,v:.9616,d:88,c:63036.99,tAdv:74.1,tSpd:100000,
+   sp:[{n:"广联先锋",i:1813.92,j:5,nAdv:12,nSpd:10000,city:"绵阳、广元、内江、攀枝花",ag:1,sg:3.833,ytdAdv:6,ytdSpd:7818.47},
+       {n:"盘古广告",i:7495.07,j:17,nAdv:20,nSpd:20000,city:"绵阳、宜宾、资阳",ag:0,sg:1.065,ytdAdv:8,ytdSpd:21976.09},
+       {n:"上海亦芯",i:5196.88,j:15,nAdv:20,nSpd:28000,city:"乐山、绵阳、宜宾",ag:.176,sg:3.316,ytdAdv:17,ytdSpd:27722.76},
+       {n:"微盟",i:10243.74,j:25,nAdv:32,nSpd:42000,city:"绵阳、乐山、泸州",ag:.143,sg:2.335,ytdAdv:32,ytdSpd:43792.02}]},
+  {rg:"业务一组",pv:"云南区",s:35,t:.6600,u:29390.12,v:.9470,d:48,c:20005.53,tAdv:50,tSpd:30000,
+   sp:[{n:"猎贝和众传媒",i:5616.72,j:18,nAdv:30,nSpd:17000,city:"大理、楚雄、曲靖",ag:.364,sg:1.244,need:"定向较窄放量困难，是否有解决方案",ytdAdv:23,ytdSpd:19989.64},
+       {n:"易联文化",i:4638.09,j:12,nAdv:20,nSpd:13000,city:"大理、楚雄、曲靖",ag:.538,sg:1.551,need:"定向较窄放量困难，是否有解决方案",ytdAdv:19,ytdSpd:9388.2}]}
+];
+
+// 优先级
+const PRI = {'河南':'T0','河北':'T1','广西':'T1','新疆':'T2','湖南':'T1','山东':'T1','安徽':'T1','湖北':'T2','四川':'T0','陕西':'T2','辽宁':'T2','福建':'T2','浙江':'T0','江苏':'T2'};
+function pri(pv){
+  if(pv.includes('冀豫'))return'T0';if(pv.includes('鄂赣'))return'T2';if(pv.includes('桂黔琼'))return'T1';
+  if(pv.includes('陕晋蒙'))return'T2';if(pv.includes('西北'))return'T2';if(pv.includes('东北'))return'T2';
+  for(const[k,v]of Object.entries(PRI))if(pv.includes(k))return v;return'T2';
+}
+
+// 重算进度
+D.forEach(d=>{d.t=d.s/d.tAdv; d.v=d.u/d.tSpd;});
+
+// 大盘均值
+const avgT = D.reduce((a,d)=>a+d.t,0)/D.length;
+const avgV = D.reduce((a,d)=>a+d.v,0)/D.length;
+
+// KPI
+function renderKPI(){
+  let s26=0,u26=0,d25=0,c25=0,belowN=0;
+  D.forEach(d=>{s26+=d.s;u26+=d.u;d25+=d.d;c25+=d.c;if(d.t<avgT||d.v<avgV)belowN++});
+  const advYoY=((s26/d25)-1)*100;
+  const spdYoY=((u26/c25)-1)*100;
+  document.getElementById('kpiRow').innerHTML=`
+    <div class="kpi hl"><div class="lab">26YTD 日耗合计</div><div class="val">${fmt(u26)}</div></div>
+    <div class="kpi hl"><div class="lab">26YTD 广告主数合计</div><div class="val">${s26}</div></div>
+    <div class="kpi"><div class="lab">广告主数整体进度</div><div class="val">${(avgT*100).toFixed(1)}%</div><div class="sub">全省区26YTD广告主数/26H1目标广告主数均值</div></div>
+    <div class="kpi"><div class="lab">日耗整体进度</div><div class="val">${(avgV*100).toFixed(1)}%</div><div class="sub">全省区26YTD日耗/26H1目标日耗均值</div></div>
+    <div class="kpi"><div class="lab">广告主数整体同比</div><div class="val">${advYoY>=0?'+':''}${advYoY.toFixed(1)}%</div><div class="sub">(26YTD广告主数合计/25YTD广告主数)-1</div></div>
+    <div class="kpi"><div class="lab">日耗整体同比</div><div class="val">${spdYoY>=0?'+':''}${spdYoY.toFixed(1)}%</div><div class="sub">(26YTD日耗合计/25YTD日耗)-1</div></div>
+  `;
+}
+
+// 主表格
+function renderTable(){
+  const priOrder={'T0':0,'T1':1,'T2':2};
+  const sorted=[...D].sort((a,b)=>{
+    const pa=priOrder[pri(a.pv)]??9, pb=priOrder[pri(b.pv)]??9;
+    if(pa!==pb) return pa-pb;
+    return b.u-a.u;
+  });
+  let html='',lastPri='';
+  sorted.forEach(d=>{
+    const p=pri(d.pv);
+    const advYoY=(d.s/d.d-1)*100;
+    const spdYoY=(d.u/d.c-1)*100;
+    const advB=d.t<avgT, spdB=d.v<avgV;
+    const isFirst=p!==lastPri; lastPri=p;
+
+    html+=`<tr class="${isFirst?'group-first':''} ${(advB||spdB)?'row-warn':''}">
+      <td>${d.rg}</td>
+      <td>
+        <span class="prov" onclick="openDlg('${d.pv}')">
+          <span class="prov-name">${d.pv}</span>
+          <span class="pri ${p.toLowerCase()}">${p}</span>
+        </span>
+      </td>
+      <td><b>${d.s}</b> <span style="color:#999;font-size:11px">/ ${d.tAdv}</span>${advB?'<span class="below">↓低于大盘</span>':''}</td>
+      <td class="center">${bar(d.t,advB)}</td>
+      <td class="center"><span class="${advYoY>=0?'yoy-up':'yoy-down'}">${advYoY>=0?'+':''}${advYoY.toFixed(1)}%</span></td>
+      <td class="gap"></td>
+      <td><b>${fmt(d.u)}</b> <span style="color:#999;font-size:11px">/ ${fmt(d.tSpd)}</span>${spdB?'<span class="below">↓低于大盘</span>':''}</td>
+      <td class="center">${bar(d.v,spdB)}</td>
+      <td class="center"><span class="${spdYoY>=0?'yoy-up':'yoy-down'}">${spdYoY>=0?'+':''}${spdYoY.toFixed(1)}%</span></td>
+    </tr>`;
+  });
+  document.getElementById('tbody').innerHTML=html;
+}
+
+function bar(val,bad){
+  const pct=Math.min(val*100,100).toFixed(1);
+  return`<div class="bar-wrap"><div class="bar-fill ${bad?'bad':'ok'}" style="width:${pct}%">${(val*100).toFixed(0)}%</div></div>`;
+}
+
+// 弹窗
+function openDlg(pv){
+  const d=D.find(x=>x.pv===pv);if(!d)return;
+  const p=pri(d.pv);
+  const advYoY=(d.s/d.d-1)*100;
+  const spdYoY=(d.u/d.c-1)*100;
+  const advB=d.t<avgT,spdB=d.v<avgV;
+
+  document.getElementById('dlgTitle').innerHTML=`${d.pv} <span class="pri ${p.toLowerCase()}">${p}</span> <span style="font-size:14px;color:#888;font-weight:400;margin-left:8px">${d.rg}</span>`;
+
+  document.getElementById('dlgBody').innerHTML=`
+    <h3 style="font-size:15px;margin-bottom:10px">省区拓客情况</h3>
+    <table class="sp-tbl" style="margin-bottom:20px">
+      <thead><tr><th></th><th>26YTD</th><th>26H1目标</th><th>目标进度</th><th>25YTD</th><th>同比</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>广告主数</b></td>
+          <td><b style="font-size:18px">${d.s}</b></td>
+          <td>${d.tAdv}</td>
+          <td><span style="font-weight:700;color:${advB?'#ef4444':'#22c55e'}">${(d.t*100).toFixed(1)}%</span></td>
+          <td>${d.d}</td>
+          <td><span class="${advYoY>=0?'yoy-up':'yoy-down'}">${advYoY>=0?'+':''}${advYoY.toFixed(1)}%</span></td>
+        </tr>
+        <tr>
+          <td><b>日耗</b></td>
+          <td><b style="font-size:18px">${fmt(d.u)}</b></td>
+          <td>${fmt(d.tSpd)}</td>
+          <td><span style="font-weight:700;color:${spdB?'#ef4444':'#22c55e'}">${(d.v*100).toFixed(1)}%</span></td>
+          <td>${fmt(d.c)}</td>
+          <td><span class="${spdYoY>=0?'yoy-up':'yoy-down'}">${spdYoY>=0?'+':''}${spdYoY.toFixed(1)}%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin-bottom:10px">服务商拓客情况</h3>
+    <table class="sp-tbl">
+      <thead><tr><th>服务商</th><th>26H1广告主数目标</th><th>26YTD广告主数</th><th>广告主数进度</th><th>26H1日耗目标</th><th>26YTD日耗</th><th>日耗进度</th><th>重点地市</th><th>需求/卡点</th></tr></thead>
+      <tbody>${d.sp.map(p=>{
+        const aP=p.nAdv>0&&p.ytdAdv?(p.ytdAdv/p.nAdv*100).toFixed(0):'-';
+        const sP=p.nSpd>0&&p.ytdSpd?(p.ytdSpd/p.nSpd*100).toFixed(0):'-';
+        const aPBad=aP!=='-'&&parseFloat(aP)<d.t*100;
+        const sPBad=sP!=='-'&&parseFloat(sP)<d.v*100;
+        return`<tr>
+        <td><b>${p.n}</b></td>
+        <td>${p.nAdv}</td>
+        <td>${p.ytdAdv||'-'}</td>
+        <td>${aP!=='-'?`<span style="font-weight:700;color:${aPBad?'#ef4444':'#22c55e'}">${aP}%</span>`:'-'}</td>
+        <td>${fmt(p.nSpd)}</td>
+        <td>${p.ytdSpd?fmt(p.ytdSpd):'-'}</td>
+        <td>${sP!=='-'?`<span style="font-weight:700;color:${sPBad?'#ef4444':'#22c55e'}">${sP}%</span>`:'-'}</td>
+        <td>${p.city||'-'}</td>
+        <td>${p.need||'-'}</td>
+      </tr>`}).join('')}</tbody>
+    </table>
+    ${(()=>{
+      const comp = COMPETE[d.pv];
+      let html = '';
+      if(comp&&comp.length) {
+        const cities2 = [...new Set(comp.map(x=>x.cy))].sort();
+        html += '<h3 style="font-size:15px;margin:24px 0 10px;color:#f97316">目标客户名单</h3>';
+        html += '<div style="margin-bottom:8px"><select id="compCityFilter" onchange="filterCompete()" style="padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px"><option value="">全部城市</option>'+cities2.map(c=>'<option value="'+c+'">'+c+'</option>').join('')+'</select> <span style="color:#888;font-size:12px">共'+comp.length+'条</span></div>';
+        html += '<table class="sp-tbl" id="compTable"><thead><tr><th>城市</th><th>城市等级</th><th>客户名称</th><th>腾讯在投</th></tr></thead>';
+        html += '<tbody>'+comp.map(c=>'<tr data-cy="'+c.cy+'"><td>'+c.cy+'</td><td>'+c.lv+'</td><td>'+c.nm+'</td><td>'+(c.ac?'<span style="color:#22c55e;font-weight:700">是</span>':'<span style="color:#999">否</span>')+'</td></tr>').join('')+'</tbody></table>';
+      }
+      return html;
+    })()}
+    ${(()=>{
+      const CAPITALS = new Set(['合肥市','哈尔滨市','长春市','沈阳市','石家庄市','郑州市','南京市','济南市','太原市','呼和浩特市','西安市','乌鲁木齐市','兰州市','西宁市','银川市','杭州市','广州市','福州市','武汉市','南昌市','南宁市','贵阳市','海口市','长沙市','成都市','重庆市','昆明市']);
+      const d1 = (DENTAL[d.pv]||[]).filter(c=>!CAPITALS.has(c.c));
+      const d2 = (ORTHO[d.pv]||[]).filter(c=>!CAPITALS.has(c.c));
+      let html = '';
+      if(d1.length) {
+        const cities1 = d1.map(c=>c.c);
+        html += '<h3 style="font-size:15px;margin:24px 0 10px;color:#667eea">地市大盘参考 · 口腔种植牙（2月）</h3>';
+        html += '<div style="margin-bottom:8px"><select id="dentalCityFilter" onchange="filterDental()" style="padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px"><option value="">全部城市</option>'+cities1.map(c=>'<option value="'+c+'">'+c+'</option>').join('')+'</select></div>';
+        html += '<table class="sp-tbl" id="dentalTable"><thead><tr><th>城市</th><th>CPM</th><th>CTR(%)</th><th>CVR(%)</th><th>CPA</th></tr></thead>';
+        html += '<tbody>'+d1.map(c=>'<tr data-cy="'+c.c+'"><td><b>'+c.c+'</b></td><td>'+c.cpm+'</td><td>'+c.ctr+'</td><td>'+c.cvr+'</td><td>'+c.cpa+'</td></tr>').join('')+'</tbody></table>';
+      }
+      if(d2.length) {
+        const cities2 = d2.map(c=>c.c);
+        html += '<h3 style="font-size:15px;margin:24px 0 10px;color:#667eea">地市大盘参考 · 口腔正畸（2月）</h3>';
+        html += '<div style="margin-bottom:8px"><select id="orthoCityFilter" onchange="filterOrtho()" style="padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px"><option value="">全部城市</option>'+cities2.map(c=>'<option value="'+c+'">'+c+'</option>').join('')+'</select></div>';
+        html += '<table class="sp-tbl" id="orthoTable"><thead><tr><th>城市</th><th>CPM</th><th>CTR(%)</th><th>CVR(%)</th><th>CPA</th></tr></thead>';
+        html += '<tbody>'+d2.map(c=>'<tr data-cy="'+c.c+'"><td><b>'+c.c+'</b></td><td>'+c.cpm+'</td><td>'+c.ctr+'</td><td>'+c.cvr+'</td><td>'+c.cpa+'</td></tr>').join('')+'</tbody></table>';
+      }
+      return html;
+    })()}
+  `;
+  document.getElementById('mask').classList.add('show');
+}
+
+function filterCompete(){const v=document.getElementById('compCityFilter').value;document.querySelectorAll('#compTable tbody tr').forEach(r=>{r.style.display=(!v||r.dataset.cy===v)?'':'none'})}
+function filterDental(){const v=document.getElementById('dentalCityFilter').value;document.querySelectorAll('#dentalTable tbody tr').forEach(r=>{r.style.display=(!v||r.dataset.cy===v)?'':'none'})}
+function filterOrtho(){const v=document.getElementById('orthoCityFilter').value;document.querySelectorAll('#orthoTable tbody tr').forEach(r=>{r.style.display=(!v||r.dataset.cy===v)?'':'none'})}
+
+const DENTAL={"东北区":[{c:"沈阳市",cpm:"27-31",ctr:"0.9-1.09",cvr:"3.52-4.27",cpa:"77-89"},{c:"哈尔滨市",cpm:"18-21",ctr:"0.78-0.94",cvr:"4.11-4.98",cpa:"51-59"},{c:"长春市",cpm:"28-32",ctr:"0.85-1.02",cvr:"4.88-5.91",cpa:"60-70"},{c:"大连市",cpm:"28-33",ctr:"1.01-1.22",cvr:"3.22-3.9",cpa:"78-91"},{c:"牡丹江市",cpm:"23-27",ctr:"2-2.42",cvr:"6.09-7.37",cpa:"17-20"},{c:"抚顺市",cpm:"23-27",ctr:"1.14-1.38",cvr:"1.9-2.3",cpa:"97-112"},{c:"鞍山市",cpm:"18-20",ctr:"1.01-1.22",cvr:"2.07-2.51",cpa:"77-89"},{c:"丹东市",cpm:"27-31",ctr:"0.7-0.85",cvr:"3.77-4.57",cpa:"91-106"},{c:"吉林市",cpm:"21-24",ctr:"0.66-0.79",cvr:"3.98-4.82",cpa:"71-83"},{c:"锦州市",cpm:"17-20",ctr:"0.8-0.97",cvr:"1.92-2.32",cpa:"102-118"},{c:"营口市",cpm:"14-17",ctr:"0.69-0.84",cvr:"2.15-2.6",cpa:"87-100"},{c:"葫芦岛市",cpm:"18-21",ctr:"0.86-1.05",cvr:"3.27-3.96",cpa:"59-68"},{c:"佳木斯市",cpm:"15-17",ctr:"1.46-1.77",cvr:"1.94-2.35",cpa:"46-54"},{c:"通化市",cpm:"27-31",ctr:"0.62-0.75",cvr:"2.96-3.59",cpa:"132-153"}],"云南区":[{c:"昆明市",cpm:"28-32",ctr:"0.7-0.85",cvr:"1.85-2.24",cpa:"194-224"},{c:"玉溪市",cpm:"16-18",ctr:"0.72-0.87",cvr:"1.59-1.92",cpa:"125-145"},{c:"楚雄彝族自治州",cpm:"16-19",ctr:"0.55-0.67",cvr:"1.59-1.92",cpa:"166-193"},{c:"曲靖市",cpm:"14-16",ctr:"0.92-1.12",cvr:"1.98-2.39",cpa:"70-81"},{c:"西双版纳傣族自治州",cpm:"18-20",ctr:"0.52-0.63",cvr:"2.29-2.77",cpa:"133-154"},{c:"德宏傣族景颇族自治州",cpm:"11-13",ctr:"0.4-0.48",cvr:"1.89-2.29",cpa:"132-153"},{c:"红河哈尼族彝族自治州",cpm:"13-15",ctr:"0.8-0.97",cvr:"1.06-1.29",cpa:"139-161"},{c:"普洱市",cpm:"10-11",ctr:"0.42-0.51",cvr:"1.67-2.02",cpa:"125-145"}],"冀豫区":[{c:"唐山市",cpm:"20-23",ctr:"0.66-0.79",cvr:"3.51-4.24",cpa:"80-93"},{c:"郑州市",cpm:"21-25",ctr:"0.79-0.95",cvr:"3.02-3.66",cpa:"81-94"},{c:"邯郸市",cpm:"19-22",ctr:"1.23-1.48",cvr:"2.95-3.58",cpa:"48-55"},{c:"石家庄市",cpm:"17-19",ctr:"1.19-1.44",cvr:"2.41-2.92",cpa:"53-61"},{c:"廊坊市",cpm:"23-26",ctr:"1.06-1.29",cvr:"3.44-4.16",cpa:"56-65"},{c:"新乡市",cpm:"18-21",ctr:"1.13-1.37",cvr:"2.66-3.22",cpa:"55-64"},{c:"南阳市",cpm:"20-23",ctr:"1.43-1.73",cvr:"2.99-3.62",cpa:"42-48"},{c:"洛阳市",cpm:"20-24",ctr:"1.24-1.51",cvr:"2.96-3.59",cpa:"50-58"},{c:"安阳市",cpm:"20-23",ctr:"1.25-1.52",cvr:"2.71-3.28",cpa:"53-62"},{c:"邢台市",cpm:"16-18",ctr:"0.92-1.12",cvr:"2.93-3.54",cpa:"52-60"},{c:"张家口市",cpm:"17-20",ctr:"0.79-0.95",cvr:"2.57-3.12",cpa:"75-87"},{c:"保定市",cpm:"12-14",ctr:"0.61-0.74",cvr:"3.71-4.49",cpa:"49-56"},{c:"信阳市",cpm:"11-13",ctr:"1.18-1.43",cvr:"2-2.43",cpa:"43-50"},{c:"衡水市",cpm:"14-16",ctr:"1.13-1.37",cvr:"2.43-2.94",cpa:"46-54"},{c:"焦作市",cpm:"13-16",ctr:"0.72-0.87",cvr:"3.52-4.26",cpa:"48-55"},{c:"承德市",cpm:"18-21",ctr:"0.98-1.18",cvr:"2.3-2.78",cpa:"73-84"},{c:"沧州市",cpm:"14-16",ctr:"0.77-0.93",cvr:"2.59-3.14",cpa:"64-74"},{c:"许昌市",cpm:"18-21",ctr:"0.99-1.19",cvr:"2.88-3.49",cpa:"58-67"}],"四川区":[{c:"成都市",cpm:"30-35",ctr:"1.54-1.86",cvr:"1.17-1.41",cpa:"152-177"},{c:"重庆市",cpm:"35-40",ctr:"1.03-1.24",cvr:"2.23-2.7",cpa:"136-158"},{c:"绵阳市",cpm:"29-33",ctr:"1.28-1.55",cvr:"2.7-3.27",cpa:"75-87"},{c:"乐山市",cpm:"21-24",ctr:"0.89-1.08",cvr:"1.93-2.33",cpa:"109-126"},{c:"达州市",cpm:"23-26",ctr:"0.72-0.87",cvr:"1.95-2.36",cpa:"132-153"},{c:"宜宾市",cpm:"21-24",ctr:"0.89-1.08",cvr:"2.66-3.22",cpa:"78-90"},{c:"遂宁市",cpm:"17-20",ctr:"0.77-0.93",cvr:"3.24-3.92",cpa:"61-71"},{c:"南充市",cpm:"17-19",ctr:"1.14-1.38",cvr:"2.48-3",cpa:"57-66"},{c:"攀枝花市",cpm:"16-19",ctr:"0.86-1.04",cvr:"2.86-3.46",cpa:"58-67"},{c:"内江市",cpm:"17-19",ctr:"1.14-1.38",cvr:"2.28-2.76",cpa:"62-72"},{c:"广元市",cpm:"22-26",ctr:"1.48-1.79",cvr:"1.12-1.35",cpa:"124-143"},{c:"德阳市",cpm:"17-20",ctr:"0.72-0.87",cvr:"2.53-3.06",cpa:"100-116"},{c:"泸州市",cpm:"23-26",ctr:"0.87-1.06",cvr:"2.79-3.38",cpa:"83-97"},{c:"资阳市",cpm:"19-22",ctr:"1.35-1.63",cvr:"2.61-3.16",cpa:"49-57"},{c:"雅安市",cpm:"18-20",ctr:"1.2-1.45",cvr:"2.25-2.73",cpa:"59-68"},{c:"巴中市",cpm:"17-20",ctr:"0.69-0.84",cvr:"2.51-3.04",cpa:"91-105"},{c:"眉山市",cpm:"16-19",ctr:"1.23-1.49",cvr:"2.77-3.35",cpa:"41-48"},{c:"自贡市",cpm:"23-26",ctr:"1.36-1.65",cvr:"2.63-3.18",cpa:"53-62"},{c:"甘孜藏族自治州",cpm:"6-7",ctr:"0.86-1.04",cvr:"0.75-0.91",cpa:"132-153"},{c:"凉山彝族自治州",cpm:"11-12",ctr:"0.63-0.76",cvr:"3.03-3.67",cpa:"54-62"}],"安徽区":[{c:"合肥市",cpm:"22-26",ctr:"1.05-1.27",cvr:"1.85-2.24",cpa:"104-120"},{c:"芜湖市",cpm:"20-23",ctr:"0.84-1.02",cvr:"2.88-3.49",cpa:"73-85"},{c:"阜阳市",cpm:"14-16",ctr:"0.83-1",cvr:"2.17-2.62",cpa:"80-93"},{c:"蚌埠市",cpm:"17-20",ctr:"0.84-1.02",cvr:"2.45-2.97",cpa:"77-89"},{c:"宿州市",cpm:"18-21",ctr:"1.64-1.98",cvr:"2.54-3.08",cpa:"37-43"},{c:"宣城市",cpm:"17-19",ctr:"1.03-1.24",cvr:"1.83-2.22",cpa:"80-93"},{c:"淮北市",cpm:"19-22",ctr:"0.56-0.67",cvr:"3.8-4.6",cpa:"80-93"},{c:"池州市",cpm:"25-29",ctr:"1.16-1.4",cvr:"2.64-3.2",cpa:"74-85"},{c:"淮南市",cpm:"13-15",ctr:"0.87-1.06",cvr:"2.99-3.62",cpa:"45-53"},{c:"滁州市",cpm:"17-20",ctr:"1.05-1.28",cvr:"2.46-2.98",cpa:"61-70"},{c:"六安市",cpm:"13-15",ctr:"0.73-0.89",cvr:"2.44-2.96",cpa:"68-79"}],"山东区":[{c:"青岛市",cpm:"26-30",ctr:"0.92-1.12",cvr:"2.82-3.42",cpa:"88-102"},{c:"盐城市",cpm:"25-29",ctr:"1.24-1.51",cvr:"1.62-1.96",cpa:"112-129"},{c:"烟台市",cpm:"30-34",ctr:"0.85-1.02",cvr:"2.78-3.37",cpa:"114-132"},{c:"济南市",cpm:"25-29",ctr:"0.8-0.97",cvr:"3.11-3.76",cpa:"92-107"},{c:"临沂市",cpm:"18-20",ctr:"0.66-0.8",cvr:"3.09-3.74",cpa:"80-92"},{c:"潍坊市",cpm:"22-26",ctr:"0.73-0.89",cvr:"2.59-3.14",cpa:"105-122"},{c:"泰安市",cpm:"16-18",ctr:"0.59-0.72",cvr:"2.62-3.17",cpa:"97-112"},{c:"淄博市",cpm:"22-26",ctr:"1.16-1.4",cvr:"4.11-4.98",cpa:"42-48"},{c:"威海市",cpm:"22-25",ctr:"0.58-0.71",cvr:"3.93-4.75",cpa:"86-100"},{c:"日照市",cpm:"16-19",ctr:"0.76-0.92",cvr:"2.67-3.24",cpa:"69-80"},{c:"聊城市",cpm:"14-16",ctr:"0.94-1.14",cvr:"2.86-3.46",cpa:"44-51"},{c:"德州市",cpm:"16-18",ctr:"0.74-0.9",cvr:"2.78-3.37",cpa:"68-79"},{c:"东营市",cpm:"16-18",ctr:"0.73-0.88",cvr:"4.3-5.21",cpa:"42-49"},{c:"济宁市",cpm:"17-20",ctr:"1.25-1.52",cvr:"3.15-3.82",cpa:"36-42"},{c:"菏泽市",cpm:"16-19",ctr:"1.47-1.78",cvr:"2.87-3.47",cpa:"34-40"}],"广东区":[{c:"广州市",cpm:"36-42",ctr:"0.6-0.72",cvr:"1.76-2.13",cpa:"311-360"},{c:"深圳市",cpm:"37-43",ctr:"0.9-1.09",cvr:"1.52-1.84",cpa:"242-280"},{c:"东莞市",cpm:"20-23",ctr:"0.57-0.69",cvr:"1.36-1.64",cpa:"230-267"},{c:"佛山市",cpm:"26-30",ctr:"0.55-0.67",cvr:"1.67-2.02",cpa:"256-296"},{c:"珠海市",cpm:"21-25",ctr:"0.57-0.69",cvr:"1.83-2.22",cpa:"186-216"},{c:"江门市",cpm:"18-21",ctr:"0.74-0.9",cvr:"1.39-1.68",cpa:"156-180"},{c:"中山市",cpm:"20-24",ctr:"0.45-0.54",cvr:"2.57-3.11",cpa:"161-187"},{c:"茂名市",cpm:"16-19",ctr:"0.72-0.87",cvr:"2.03-2.45",cpa:"100-116"},{c:"湛江市",cpm:"20-23",ctr:"0.9-1.09",cvr:"1.7-2.06",cpa:"119-137"},{c:"汕头市",cpm:"26-31",ctr:"0.59-0.72",cvr:"2.18-2.64",cpa:"188-217"},{c:"揭阳市",cpm:"14-17",ctr:"0.33-0.4",cvr:"1.66-2.01",cpa:"231-268"},{c:"潮州市",cpm:"13-16",ctr:"0.39-0.47",cvr:"2.13-2.58",cpa:"144-167"},{c:"肇庆市",cpm:"17-20",ctr:"0.85-1.03",cvr:"1.52-1.84",cpa:"118-136"},{c:"韶关市",cpm:"20-23",ctr:"0.7-0.85",cvr:"2.57-3.12",cpa:"98-114"},{c:"惠州市",cpm:"14-16",ctr:"0.92-1.12",cvr:"1.77-2.14",cpa:"79-91"},{c:"清远市",cpm:"13-16",ctr:"0.64-0.77",cvr:"1.94-2.35",cpa:"98-113"},{c:"梅州市",cpm:"16-18",ctr:"0.39-0.47",cvr:"2.39-2.89",cpa:"157-182"}],"桂黔琼区":[{c:"南宁市",cpm:"31-36",ctr:"0.71-0.86",cvr:"3-3.63",cpa:"133-154"},{c:"柳州市",cpm:"24-27",ctr:"0.71-0.86",cvr:"2.98-3.61",cpa:"108-125"},{c:"钦州市",cpm:"18-21",ctr:"0.78-0.94",cvr:"1.94-2.35",cpa:"108-125"},{c:"北海市",cpm:"12-14",ctr:"0.76-0.92",cvr:"1.89-2.28",cpa:"78-91"},{c:"贵港市",cpm:"17-19",ctr:"0.64-0.77",cvr:"2.44-2.95",cpa:"101-117"},{c:"遵义市",cpm:"17-20",ctr:"1.05-1.28",cvr:"2.83-3.43",cpa:"52-60"},{c:"玉林市",cpm:"14-16",ctr:"0.59-0.71",cvr:"1.65-2",cpa:"130-150"},{c:"桂林市",cpm:"22-25",ctr:"0.87-1.06",cvr:"1.88-2.28",cpa:"119-137"},{c:"贵阳市",cpm:"21-24",ctr:"0.45-0.55",cvr:"2.6-3.15",cpa:"159-184"},{c:"海口市",cpm:"29-33",ctr:"0.81-0.98",cvr:"2.86-3.47",cpa:"112-130"},{c:"百色市",cpm:"9-11",ctr:"0.7-0.85",cvr:"0.88-1.07",cpa:"136-157"}],"江苏区":[{c:"苏州市",cpm:"35-41",ctr:"0.67-0.82",cvr:"1.8-2.17",cpa:"262-304"},{c:"南京市",cpm:"34-39",ctr:"1.91-2.31",cvr:"1.24-1.51",cpa:"129-149"},{c:"无锡市",cpm:"33-38",ctr:"0.93-1.13",cvr:"2.16-2.61",cpa:"149-172"},{c:"南通市",cpm:"28-33",ctr:"1.25-1.52",cvr:"2.4-2.91",cpa:"86-99"},{c:"常州市",cpm:"30-35",ctr:"0.86-1.05",cvr:"1.78-2.15",cpa:"177-205"},{c:"扬州市",cpm:"23-27",ctr:"0.86-1.05",cvr:"2.99-3.62",cpa:"81-94"},{c:"泰州市",cpm:"30-34",ctr:"0.97-1.17",cvr:"3.02-3.66",cpa:"92-106"},{c:"宿迁市",cpm:"21-24",ctr:"1.5-1.82",cvr:"1.08-1.31",cpa:"115-133"},{c:"连云港市",cpm:"24-28",ctr:"0.68-0.83",cvr:"2.89-3.5",cpa:"108-125"},{c:"淮安市",cpm:"23-27",ctr:"0.79-0.96",cvr:"2.23-2.7",cpa:"119-137"},{c:"镇江市",cpm:"23-27",ctr:"0.8-0.97",cvr:"3.6-4.36",cpa:"71-82"},{c:"徐州市",cpm:"21-24",ctr:"0.89-1.08",cvr:"3.28-3.97",cpa:"60-69"},{c:"盐城市",cpm:"25-29",ctr:"1.24-1.51",cvr:"1.62-1.96",cpa:"112-129"}],"浙江区":[{c:"宁波市",cpm:"29-33",ctr:"0.73-0.89",cvr:"2.05-2.48",cpa:"173-200"},{c:"杭州市",cpm:"52-60",ctr:"0.83-1",cvr:"3.21-3.89",cpa:"177-205"},{c:"嘉兴市",cpm:"30-35",ctr:"0.75-0.91",cvr:"2.15-2.6",cpa:"169-195"},{c:"金华市",cpm:"34-40",ctr:"0.88-1.07",cvr:"2.06-2.5",cpa:"169-196"},{c:"绍兴市",cpm:"31-35",ctr:"0.68-0.83",cvr:"1.92-2.32",cpa:"210-243"},{c:"台州市",cpm:"22-25",ctr:"0.78-0.94",cvr:"1.97-2.38",cpa:"129-150"},{c:"温州市",cpm:"25-29",ctr:"0.85-1.02",cvr:"2.26-2.74",cpa:"118-137"},{c:"衢州市",cpm:"17-19",ctr:"0.93-1.13",cvr:"1.98-2.39",cpa:"82-95"},{c:"湖州市",cpm:"30-34",ctr:"0.64-0.78",cvr:"2.87-3.47",cpa:"147-170"},{c:"舟山市",cpm:"34-39",ctr:"1.11-1.35",cvr:"1.59-1.92",cpa:"173-200"},{c:"丽水市",cpm:"22-26",ctr:"1.07-1.3",cvr:"2.55-3.08",cpa:"74-85"}],"湖南区":[{c:"长沙市",cpm:"28-32",ctr:"0.89-1.08",cvr:"4.37-5.29",cpa:"65-75"},{c:"衡阳市",cpm:"21-24",ctr:"0.73-0.88",cvr:"2.33-2.82",cpa:"109-126"},{c:"岳阳市",cpm:"16-19",ctr:"0.63-0.76",cvr:"2.38-2.88",cpa:"103-119"},{c:"永州市",cpm:"23-27",ctr:"1.46-1.77",cvr:"1.81-2.2",cpa:"78-91"},{c:"湘潭市",cpm:"33-38",ctr:"1.38-1.67",cvr:"2.75-3.32",cpa:"79-91"},{c:"常德市",cpm:"16-19",ctr:"0.79-0.95",cvr:"4.08-4.93",cpa:"45-52"},{c:"株洲市",cpm:"18-21",ctr:"0.86-1.04",cvr:"3.23-3.91",cpa:"59-68"}],"福建区":[{c:"福州市",cpm:"36-41",ctr:"0.85-1.02",cvr:"2.95-3.58",cpa:"128-149"},{c:"漳州市",cpm:"17-20",ctr:"1.05-1.27",cvr:"1.7-2.06",cpa:"86-100"},{c:"厦门市",cpm:"25-29",ctr:"0.82-0.99",cvr:"2.47-2.99",cpa:"111-128"},{c:"泉州市",cpm:"25-29",ctr:"0.88-1.07",cvr:"2.39-2.9",cpa:"108-125"},{c:"龙岩市",cpm:"20-23",ctr:"0.89-1.08",cvr:"2.57-3.11",cpa:"76-88"},{c:"莆田市",cpm:"25-29",ctr:"0.87-1.06",cvr:"1.74-2.1",cpa:"144-167"}],"西北区":[{c:"乌鲁木齐市",cpm:"17-20",ctr:"0.71-0.86",cvr:"1.38-1.67",cpa:"156-180"},{c:"西宁市",cpm:"17-19",ctr:"1.26-1.53",cvr:"1.17-1.41",cpa:"101-117"},{c:"兰州市",cpm:"20-23",ctr:"0.55-0.67",cvr:"2.7-3.27",cpa:"138-159"},{c:"酒泉市",cpm:"8-10",ctr:"0.83-1.01",cvr:"1.69-2.04",cpa:"56-65"},{c:"银川市",cpm:"13-15",ctr:"0.55-0.67",cvr:"3.49-4.23",cpa:"47-54"},{c:"天水市",cpm:"14-16",ctr:"0.76-0.92",cvr:"3.52-4.27",cpa:"42-49"},{c:"喀什地区",cpm:"9-10",ctr:"0.78-0.94",cvr:"1.54-1.86",cpa:"65-75"},{c:"吴忠市",cpm:"15-18",ctr:"1.05-1.28",cvr:"2.65-3.21",cpa:"50-57"},{c:"昌吉回族自治州",cpm:"20-24",ctr:"1.05-1.27",cvr:"1.99-2.4",cpa:"89-103"},{c:"巴音郭楞蒙古自治州",cpm:"21-24",ctr:"0.69-0.84",cvr:"3.75-4.54",cpa:"71-82"},{c:"和田地区",cpm:"4-5",ctr:"0.43-0.52",cvr:"0.64-0.77",cpa:"141-163"},{c:"哈密市",cpm:"17-20",ctr:"0.95-1.15",cvr:"1.65-2",cpa:"99-114"},{c:"石河子市",cpm:"24-27",ctr:"1.13-1.37",cvr:"1.7-2.06",cpa:"110-128"}],"鄂赣区":[{c:"武汉市",cpm:"42-48",ctr:"0.57-0.69",cvr:"2.46-2.98",cpa:"271-313"},{c:"南昌市",cpm:"36-42",ctr:"0.72-0.87",cvr:"2.61-3.16",cpa:"174-202"},{c:"宜昌市",cpm:"21-25",ctr:"0.54-0.66",cvr:"1.67-2.02",cpa:"212-246"},{c:"荆州市",cpm:"28-33",ctr:"0.6-0.72",cvr:"2.53-3.06",cpa:"168-194"},{c:"九江市",cpm:"21-25",ctr:"1.25-1.52",cvr:"3.12-3.77",cpa:"49-57"},{c:"恩施土家族苗族自治州",cpm:"19-22",ctr:"0.6-0.72",cvr:"1.37-1.66",cpa:"208-240"},{c:"襄阳市",cpm:"26-31",ctr:"0.7-0.85",cvr:"1.79-2.16",cpa:"190-220"},{c:"黄石市",cpm:"33-38",ctr:"1.21-1.46",cvr:"2.38-2.88",cpa:"104-120"},{c:"黄冈市",cpm:"23-27",ctr:"1.23-1.48",cvr:"2.2-2.67",cpa:"79-91"},{c:"上饶市",cpm:"26-30",ctr:"1.14-1.38",cvr:"2.28-2.76",cpa:"89-103"},{c:"赣州市",cpm:"19-23",ctr:"1.05-1.27",cvr:"2.85-3.45",cpa:"59-69"},{c:"咸宁市",cpm:"26-30",ctr:"1.44-1.75",cvr:"3.01-3.65",cpa:"54-62"},{c:"孝感市",cpm:"23-26",ctr:"0.67-0.81",cvr:"2.14-2.59",cpa:"144-167"},{c:"荆门市",cpm:"30-35",ctr:"0.79-0.95",cvr:"2.75-3.32",cpa:"126-146"},{c:"鄂州市",cpm:"21-24",ctr:"0.99-1.2",cvr:"1.91-2.31",cpa:"101-117"}],"陕晋蒙区":[{c:"西安市",cpm:"37-43",ctr:"1.22-1.47",cvr:"2.27-2.75",cpa:"120-139"},{c:"鄂尔多斯市",cpm:"19-22",ctr:"0.86-1.04",cvr:"2.4-2.91",cpa:"83-96"},{c:"太原市",cpm:"26-30",ctr:"1.05-1.28",cvr:"2.91-3.52",cpa:"75-87"},{c:"榆林市",cpm:"13-15",ctr:"0.69-0.84",cvr:"2.07-2.51",cpa:"82-95"},{c:"宝鸡市",cpm:"23-26",ctr:"0.82-0.99",cvr:"2.33-2.82",cpa:"109-126"},{c:"赤峰市",cpm:"17-19",ctr:"0.53-0.64",cvr:"4.09-4.95",cpa:"70-81"},{c:"呼和浩特市",cpm:"20-23",ctr:"0.83-1",cvr:"4.8-5.81",cpa:"45-52"},{c:"乌兰察布市",cpm:"19-22",ctr:"0.95-1.15",cvr:"3.08-3.73",cpa:"57-66"},{c:"包头市",cpm:"16-19",ctr:"1.03-1.24",cvr:"2.72-3.29",cpa:"53-61"},{c:"运城市",cpm:"19-22",ctr:"0.93-1.13",cvr:"2.96-3.59",cpa:"59-68"},{c:"渭南市",cpm:"18-21",ctr:"1.58-1.91",cvr:"1.2-1.45",cpa:"87-101"},{c:"大同市",cpm:"13-16",ctr:"0.75-0.91",cvr:"2.15-2.6",cpa:"75-87"},{c:"晋城市",cpm:"16-18",ctr:"1.04-1.25",cvr:"2-2.42",cpa:"68-79"},{c:"巴彦淖尔市",cpm:"18-20",ctr:"0.48-0.59",cvr:"3.1-3.75",cpa:"105-121"}]};
+const ORTHO={"东北区":[{c:"沈阳市",cpm:"27-31",ctr:"0.9-1.09",cvr:"3.52-4.27",cpa:"77-89"}],"云南区":[{c:"昆明市",cpm:"12-14",ctr:"0.2-0.24",cvr:"2.31-2.79",cpa:"235-272"}],"冀豫区":[{c:"邯郸市",cpm:"6-7",ctr:"0.17-0.21",cvr:"2.32-2.81",cpa:"144-167"},{c:"石家庄市",cpm:"6-7",ctr:"0.14-0.17",cvr:"1.68-2.04",cpa:"219-254"},{c:"唐山市",cpm:"7-9",ctr:"0.29-0.35",cvr:"1.68-2.04",cpa:"137-159"},{c:"张家口市",cpm:"6-8",ctr:"0.23-0.28",cvr:"2.43-2.94",cpa:"104-120"}],"四川区":[{c:"成都市",cpm:"9-11",ctr:"0.25-0.3",cvr:"1.51-1.83",cpa:"227-262"},{c:"乐山市",cpm:"7-9",ctr:"0.35-0.43",cvr:"1.15-1.39",cpa:"163-189"},{c:"广元市",cpm:"6-7",ctr:"0.31-0.38",cvr:"1.09-1.32",cpa:"161-186"},{c:"凉山彝族自治州",cpm:"9-11",ctr:"0.48-0.58",cvr:"1.07-1.3",cpa:"167-193"},{c:"重庆市",cpm:"10-12",ctr:"0.26-0.31",cvr:"2.57-3.11",cpa:"145-168"},{c:"攀枝花市",cpm:"10-12",ctr:"0.25-0.3",cvr:"3.06-3.7",cpa:"122-141"}],"安徽区":[{c:"宣城市",cpm:"5-6",ctr:"0.29-0.36",cvr:"0.73-0.89",cpa:"216-250"}],"山东区":[{c:"青岛市",cpm:"10-11",ctr:"0.44-0.53",cvr:"1.24-1.5",cpa:"162-188"},{c:"聊城市",cpm:"7-9",ctr:"0.27-0.32",cvr:"2.38-2.88",cpa:"108-125"},{c:"潍坊市",cpm:"14-16",ctr:"1.99-2.4",cvr:"0.28-0.33",cpa:"223-258"},{c:"日照市",cpm:"8-10",ctr:"0.61-0.74",cvr:"1.16-1.4",cpa:"105-122"}],"广东区":[{c:"佛山市",cpm:"18-21",ctr:"0.28-0.33",cvr:"1.64-1.99",cpa:"361-418"},{c:"广州市",cpm:"19-22",ctr:"0.29-0.36",cvr:"1.93-2.33",cpa:"308-356"},{c:"珠海市",cpm:"12-14",ctr:"0.35-0.43",cvr:"1.97-2.38",cpa:"165-191"},{c:"梅州市",cpm:"6-7",ctr:"0.34-0.41",cvr:"1.18-1.43",cpa:"145-168"},{c:"东莞市",cpm:"7-8",ctr:"0.15-0.18",cvr:"2.67-3.23",cpa:"159-184"}],"桂黔琼区":[{c:"南宁市",cpm:"6-7",ctr:"0.24-0.29",cvr:"1.07-1.3",cpa:"197-228"},{c:"贵阳市",cpm:"8-10",ctr:"0.55-0.67",cvr:"0.92-1.12",cpa:"149-172"},{c:"遵义市",cpm:"7-9",ctr:"0.57-0.69",cvr:"0.79-0.95",cpa:"150-174"}],"江苏区":[{c:"苏州市",cpm:"7-9",ctr:"0.29-0.35",cvr:"2.04-2.47",cpa:"113-131"},{c:"常州市",cpm:"10-11",ctr:"0.3-0.37",cvr:"1.27-1.54",cpa:"229-265"},{c:"无锡市",cpm:"15-17",ctr:"0.29-0.36",cvr:"2.95-3.57",cpa:"153-177"},{c:"泰州市",cpm:"9-10",ctr:"0.22-0.26",cvr:"1.76-2.13",cpa:"205-237"},{c:"镇江市",cpm:"8-10",ctr:"0.2-0.24",cvr:"1.58-1.91",cpa:"243-282"},{c:"连云港市",cpm:"11-13",ctr:"0.23-0.28",cvr:"2.8-3.39",cpa:"163-189"}],"浙江区":[{c:"金华市",cpm:"7-9",ctr:"0.33-0.4",cvr:"1.06-1.29",cpa:"191-221"},{c:"温州市",cpm:"10-12",ctr:"0.55-0.67",cvr:"0.93-1.13",cpa:"176-204"},{c:"衢州市",cpm:"9-10",ctr:"0.34-0.41",cvr:"1.18-1.43",cpa:"201-233"}],"湖南区":[{c:"长沙市",cpm:"6-7",ctr:"0.23-0.28",cvr:"2.9-3.51",cpa:"82-95"},{c:"永州市",cpm:"8-9",ctr:"0.4-0.48",cvr:"1.07-1.3",cpa:"170-197"}],"福建区":[{c:"福州市",cpm:"13-15",ctr:"0.26-0.31",cvr:"1.3-1.58",cpa:"348-403"},{c:"泉州市",cpm:"8-9",ctr:"0.37-0.45",cvr:"1.45-1.76",cpa:"131-151"},{c:"厦门市",cpm:"42-49",ctr:"0.13-0.16",cvr:"6.24-7.56",cpa:"451-522"}],"西北区":[{c:"西宁市",cpm:"8-9",ctr:"0.28-0.33",cvr:"1.77-2.14",cpa:"146-169"},{c:"乌鲁木齐市",cpm:"10-11",ctr:"0.26-0.31",cvr:"1.78-2.15",cpa:"196-227"},{c:"天水市",cpm:"8-9",ctr:"0.39-0.47",cvr:"1.24-1.5",cpa:"149-173"}],"鄂赣区":[{c:"恩施土家族苗族自治州",cpm:"7-8",ctr:"0.37-0.45",cvr:"0.92-1.12",cpa:"181-210"},{c:"赣州市",cpm:"6-7",ctr:"0.33-0.4",cvr:"1.34-1.62",cpa:"127-147"},{c:"宜昌市",cpm:"13-15",ctr:"0.17-0.21",cvr:"2.28-2.76",cpa:"304-351"}],"陕晋蒙区":[{c:"西安市",cpm:"13-15",ctr:"0.31-0.38",cvr:"1.94-2.35",cpa:"189-219"},{c:"渭南市",cpm:"10-11",ctr:"0.39-0.47",cvr:"1.5-1.82",cpa:"153-177"},{c:"安康市",cpm:"8-9",ctr:"0.3-0.37",cvr:"1.81-2.19",cpa:"132-153"},{c:"咸阳市",cpm:"10-12",ctr:"0.35-0.43",cvr:"1.41-1.7",cpa:"187-217"},{c:"宝鸡市",cpm:"6-7",ctr:"0.31-0.38",cvr:"0.91-1.1",cpa:"185-214"}]};
+const COMPETE={"东北区":[{cy:"哈尔滨",lv:"二线",nm:"哈尔滨淇奥口腔医疗门诊有限公司阿城淇奥口腔门诊部",ac:0},{cy:"哈尔滨",lv:"二线",nm:"优诺",ac:0},{cy:"哈尔滨",lv:"二线",nm:"哈尔滨诺倍尔口腔门诊部有限责任公司",ac:0},{cy:"哈尔滨",lv:"二线",nm:"哈尔滨淇奥口腔医疗门诊有限公司",ac:0},{cy:"哈尔滨",lv:"二线",nm:"黑龙江美植口腔门诊有限公司",ac:0},{cy:"长春",lv:"三线",nm:"长春市雅贝嘉口腔门诊有限公司",ac:0},{cy:"长春",lv:"三线",nm:"长春市朝阳区牙冠军口腔门诊部有限公司",ac:0},{cy:"延边",lv:"其他",nm:"延吉市小小韩北口腔诊所有限公司",ac:0},{cy:"吉林",lv:"其他",nm:"吉林市志合口腔门诊部有限公司",ac:0},{cy:"松原",lv:"其他",nm:"松原市宁江区上诚口腔门诊部有限公司",ac:0},{cy:"吉林",lv:"其他",nm:"吉林市新吉诚口腔有限公司",ac:0},{cy:"吉林",lv:"其他",nm:"吉林爱齿口腔有限公司",ac:0},{cy:"长春",lv:"三线",nm:"牙博士口腔",ac:0},{cy:"长春",lv:"三线",nm:"长春中大口腔门诊有限责任公司",ac:0},{cy:"长春",lv:"三线",nm:"长春市南关区安信口腔门诊有限责任公司",ac:0},{cy:"抚顺",lv:"其他",nm:"抚顺市顺城区吴妍口腔门诊部",ac:0},{cy:"大连",lv:"二线",nm:"大连沙河口亚美嘉口腔诊所有限公司",ac:0},{cy:"辽阳",lv:"其他",nm:"辽阳嘉和口腔医院有限公司",ac:0},{cy:"大连",lv:"二线",nm:"大连米嘉臻品口腔门诊部有限公司",ac:0},{cy:"大连",lv:"二线",nm:"大连睿康卓美口腔医院有限公司",ac:0},{cy:"锦州",lv:"其他",nm:"锦州美康口腔有限公司",ac:0},{cy:"辽阳",lv:"其他",nm:"辽阳维尔口腔门诊部有限公司",ac:0},{cy:"大连",lv:"二线",nm:"大连米嘉口腔门诊部有限公司",ac:1},{cy:"大连",lv:"二线",nm:"大连沙医生整形美容口腔专科医院有限公司",ac:0},{cy:"抚顺",lv:"其他",nm:"抚顺市顺城区兰兴海口腔门诊部有限公司",ac:0},{cy:"大连",lv:"二线",nm:"大连康贝佳口腔医院有限公司",ac:1},{cy:"朝阳",lv:"其他",nm:"朝阳牙博仕口腔医院有限公司",ac:0}],"云南区":[{cy:"昆明",lv:"二线",nm:"昆明柏德",ac:0},{cy:"昆明",lv:"二线",nm:"拜博口腔",ac:0},{cy:"曲靖",lv:"其他",nm:"陆良德普医疗服务有限公司同乐口腔门诊部",ac:0},{cy:"保山",lv:"其他",nm:"保山市德康口腔医院有限责任公司",ac:0},{cy:"楚雄",lv:"其他",nm:"楚雄艾美口腔门诊部有限责任公司",ac:0},{cy:"玉溪",lv:"其他",nm:"玉溪真至口腔医疗服务有限责任公司",ac:0},{cy:"楚雄",lv:"其他",nm:"楚雄浩瑞奥德口腔门诊部有限公司",ac:1},{cy:"西双版纳",lv:"其他",nm:"西双版纳伯格韩美口腔医院有限公司",ac:0},{cy:"楚雄",lv:"其他",nm:"楚雄牙管家口腔门诊部有限责任公司",ac:0},{cy:"昆明",lv:"二线",nm:"云南尚爱韩美企业管理有限公司官渡环城南路口腔门诊部",ac:0},{cy:"昆明",lv:"二线",nm:"德韩口腔",ac:0},{cy:"楚雄",lv:"其他",nm:"楚雄奥德口腔门诊部有限公司",ac:0},{cy:"昆明",lv:"二线",nm:"美奥口腔",ac:0},{cy:"昆明",lv:"二线",nm:"昆明柏德",ac:0},{cy:"曲靖",lv:"其他",nm:"曲靖京贝口腔门诊部有限公司",ac:0},{cy:"文山",lv:"其他",nm:"云南昆口牙院长口腔医疗连锁管理有限公司文山口腔门诊分公司",ac:0},{cy:"楚雄",lv:"其他",nm:"楚雄贝安口腔门诊部有限公司",ac:1},{cy:"昆明",lv:"二线",nm:"昆明德系口腔门诊部有限公司",ac:0},{cy:"玉溪",lv:"其他",nm:"玉溪西瑞口腔有限公司",ac:1},{cy:"临沧",lv:"其他",nm:"临沧昆大口腔医院有限公司",ac:0},{cy:"玉溪",lv:"其他",nm:"玉溪牙博仕口腔门诊有限公司",ac:1},{cy:"玉溪",lv:"其他",nm:"新平舒尔口腔门诊有限公司",ac:0},{cy:"昭通",lv:"其他",nm:"昭通柯品牙管家口腔医疗有限公司",ac:0},{cy:"玉溪",lv:"其他",nm:"玉溪舒尔口腔门诊有限公司高新分公司",ac:0},{cy:"昆明",lv:"二线",nm:"昆明柏德",ac:0},{cy:"昆明",lv:"二线",nm:"云南长鹏口腔医院管理有限公司官渡香樟俊园二期口腔门诊部",ac:0},{cy:"普洱",lv:"其他",nm:"普洱森贝口腔医院有限公司",ac:1},{cy:"大理",lv:"其他",nm:"金莱雅(大理)口腔有限公司",ac:0},{cy:"保山",lv:"其他",nm:"保山源一志辉口腔有限公司",ac:1},{cy:"昆明",lv:"二线",nm:"云南松鼠医院管理有限公司蓝光昆仑中心口腔门诊部",ac:0},{cy:"楚雄",lv:"其他",nm:"楚雄博德口腔医院有限公司",ac:0},{cy:"红河",lv:"其他",nm:"蒙自牙博仕口腔门诊有限公司",ac:1}],"冀豫区":[{cy:"秦皇岛",lv:"其他",nm:"秦皇岛致美唯品口腔医院有限公司河北大街口腔门诊部",ac:0},{cy:"廊坊",lv:"其他",nm:"廊坊济民祥云口腔门诊部有限公司",ac:0},{cy:"沧州",lv:"其他",nm:"沧州市众博口腔门诊有限公司",ac:0},{cy:"邢台",lv:"其他",nm:"邢台万博口腔门诊有限公司",ac:0},{cy:"保定",lv:"三线",nm:"保定洪英口腔医疗服务有限公司洪英口腔门诊部",ac:0},{cy:"张家口",lv:"其他",nm:"朝聚",ac:0},{cy:"邯郸",lv:"三线",nm:"邯郸市丛台区正植口腔门诊部有限公司",ac:1},{cy:"保定",lv:"三线",nm:"定兴县优贝口腔门诊有限公司",ac:0},{cy:"保定",lv:"三线",nm:"保定阳光口腔门诊部",ac:0},{cy:"邢台",lv:"其他",nm:"邢台宏皓口腔医院有限公司",ac:0},{cy:"石家庄",lv:"三线",nm:"石家庄和协口腔医院有限公司",ac:0},{cy:"保定",lv:"三线",nm:"保定合众口腔门诊部",ac:0},{cy:"沧州",lv:"其他",nm:"沧州市皓邦口腔门诊部有限责任公司",ac:0},{cy:"秦皇岛",lv:"其他",nm:"秦皇岛伍颗芽医院管理有限公司第一口腔诊所",ac:1},{cy:"承德",lv:"其他",nm:"承德玥莱美口腔门诊有限责任公司",ac:0},{cy:"邯郸",lv:"三线",nm:"邯郸市邯山区牙卫士口腔门诊有限公司",ac:0},{cy:"承德",lv:"其他",nm:"围场满族蒙古族自治县惟德口腔医院",ac:0},{cy:"秦皇岛",lv:"其他",nm:"秦皇岛口腔医院",ac:0},{cy:"廊坊",lv:"其他",nm:"霸州中科口腔医院有限公司",ac:1},{cy:"邯郸",lv:"三线",nm:"邯郸市邯山区连强口腔医疗服务有限公司",ac:0},{cy:"沧州",lv:"其他",nm:"沧州莱恩口腔医院有限公司",ac:1},{cy:"邯郸",lv:"三线",nm:"河北正植口腔医院有限公司",ac:0},{cy:"张家口",lv:"其他",nm:"张家口麦格口腔门诊有限公司桥西区口腔门诊部",ac:1},{cy:"秦皇岛",lv:"其他",nm:"秦皇岛麦格医疗管理有限责任公司迎宾路口腔门诊部",ac:0},{cy:"石家庄",lv:"三线",nm:"石家庄植美贝臣口腔医疗服务有限公司长安口腔门诊部",ac:0},{cy:"邯郸",lv:"三线",nm:"区域中诺",ac:0},{cy:"开封",lv:"其他",nm:"开封市禹王台区知妍口腔门诊部",ac:0},{cy:"许昌",lv:"其他",nm:"许昌市许都钻叶口腔门诊有限公司",ac:0},{cy:"南阳",lv:"其他",nm:"河南大树口腔门诊有限公司",ac:0},{cy:"郑州",lv:"二线",nm:"郑州唯美",ac:0},{cy:"新乡",lv:"其他",nm:"长垣市唯美口腔门诊有限公司",ac:0},{cy:"郑州",lv:"二线",nm:"郑州乐植口腔互联网医院有限公司",ac:0},{cy:"许昌",lv:"其他",nm:"河南蓝洁口腔医院有限公司",ac:0},{cy:"德州",lv:"其他",nm:"禹城市禹舜口腔医院有限公司",ac:0},{cy:"南阳",lv:"其他",nm:"南阳裕州裕信口腔医疗科技有限责任公司",ac:0},{cy:"驻马店",lv:"其他",nm:"平舆县贝亚德口腔医院有限公司",ac:0},{cy:"平顶山",lv:"其他",nm:"鲁山县众诚口腔门诊有限公司",ac:0},{cy:"南阳",lv:"其他",nm:"南阳市宛城区牙博仕口腔门诊有限公司",ac:0},{cy:"焦作",lv:"其他",nm:"武陟县小虎牙口腔服务有限公司",ac:1},{cy:"许昌",lv:"其他",nm:"禹州市赛尔博大口腔门诊有限公司",ac:0},{cy:"安阳",lv:"其他",nm:"安阳民安口腔医院有限公司",ac:1},{cy:"郑州",lv:"二线",nm:"郑州植想来口腔医院有限公司",ac:0},{cy:"郑州",lv:"二线",nm:"郑州罗德口腔医疗科技集团有限公司",ac:0},{cy:"许昌",lv:"其他",nm:"许昌赛尔口腔门诊部有限公司",ac:0},{cy:"洛阳",lv:"其他",nm:"洛阳合信口腔门诊有限公司",ac:0},{cy:"信阳",lv:"其他",nm:"信阳贝亚德口腔门诊有限公司",ac:0},{cy:"南阳",lv:"其他",nm:"河南泓天医疗管理有限公司郑州南区口腔医院",ac:0},{cy:"周口",lv:"其他",nm:"郸城县天地人口腔门诊部有限公司",ac:0},{cy:"濮阳",lv:"其他",nm:"河南光十华口腔医疗连锁管理有限公司",ac:0},{cy:"商丘",lv:"其他",nm:"商丘美迪口腔医疗有限公司香君路分公司",ac:0},{cy:"周口",lv:"其他",nm:"周口市德正口腔医院有限公司",ac:0},{cy:"洛阳",lv:"其他",nm:"洛阳市齐仁口腔医院有限公司",ac:0},{cy:"郑州",lv:"二线",nm:"德韩口腔",ac:0},{cy:"洛阳",lv:"其他",nm:"洛阳凯旋口腔门诊部有限公司",ac:0},{cy:"洛阳",lv:"其他",nm:"洛阳圣贝口腔医院有限公司",ac:1},{cy:"驻马店",lv:"其他",nm:"驻马店陌客尔口腔门诊有限公司",ac:0},{cy:"许昌",lv:"其他",nm:"许昌华大口腔门诊有限公司",ac:0},{cy:"郑州",lv:"二线",nm:"郑州植得",ac:0},{cy:"开封",lv:"其他",nm:"尉氏县植卓口腔门诊有限公司",ac:0},{cy:"信阳",lv:"其他",nm:"信阳合众京州口腔医院有限公司",ac:0},{cy:"南阳",lv:"其他",nm:"南阳市卧龙区百乐口腔服务有限公司",ac:0},{cy:"商丘",lv:"其他",nm:"商丘京德口腔医院有限公司",ac:0},{cy:"洛阳",lv:"其他",nm:"河南牙大夫口腔门诊部有限公司",ac:1},{cy:"开封",lv:"其他",nm:"开封豫大口腔门诊部有限公司",ac:0},{cy:"南阳",lv:"其他",nm:"区域中诺",ac:0}],"四川区":[{cy:"巴中",lv:"其他",nm:"巴中青诚口腔医院",ac:0},{cy:"巴中",lv:"其他",nm:"巴中启喜口腔诊所管理有限公司",ac:0},{cy:"德阳",lv:"其他",nm:"成都新桥",ac:0},{cy:"广安",lv:"其他",nm:"广安爱牙仕口腔门诊部有限公司",ac:0},{cy:"甘孜",lv:"其他",nm:"康定市铭德口腔诊所有限公司",ac:0},{cy:"乐山",lv:"其他",nm:"乐山市启辰口腔门诊部有限公司",ac:1},{cy:"乐山",lv:"其他",nm:"乐山安普口腔门诊部有限公司",ac:0},{cy:"乐山",lv:"其他",nm:"乐山众邦口腔门诊部有限公司",ac:0},{cy:"乐山",lv:"其他",nm:"四川品众口腔门诊部有限公司",ac:0},{cy:"泸州",lv:"其他",nm:"四川川口附一口腔医院有限公司",ac:1},{cy:"泸州",lv:"其他",nm:"四川大蓉和川口附一口腔医院有限公司",ac:1},{cy:"泸州",lv:"其他",nm:"泸州江阳微笑口腔门诊部有限责任公司",ac:0},{cy:"泸州",lv:"其他",nm:"泸州尚好口腔门诊部有限公司",ac:0},{cy:"眉山",lv:"其他",nm:"眉山寿乡宇滔口腔医院有限责任公司",ac:0},{cy:"绵阳",lv:"其他",nm:"绵阳医博口腔门诊有限公司",ac:1},{cy:"绵阳",lv:"其他",nm:"绵阳朗睿口腔门诊部有限公司",ac:0},{cy:"绵阳",lv:"其他",nm:"绵阳紫馨口腔门诊部有限公司",ac:1},{cy:"南充",lv:"其他",nm:"南充高坪美臣口腔门诊有限责任公司",ac:0},{cy:"南充",lv:"其他",nm:"南充远大数智牙谷口腔门诊部有限公司",ac:0},{cy:"南充",lv:"其他",nm:"南充医大口腔门诊部有限公司",ac:0},{cy:"内江",lv:"其他",nm:"内江鼎宏晟口腔门诊部有限公司",ac:0},{cy:"内江",lv:"其他",nm:"内江东兴启辰口腔门诊部有限责任公司",ac:1},{cy:"攀枝花",lv:"其他",nm:"攀枝花市芒果口腔门诊有限公司",ac:1},{cy:"攀枝花",lv:"其他",nm:"攀枝花雅致医疗管理有限公司",ac:0},{cy:"遂宁",lv:"其他",nm:"遂宁优佳口腔门诊部有限责任公司",ac:1},{cy:"遂宁",lv:"其他",nm:"遂宁遂启宁辰口腔门诊部有限责任公司",ac:0},{cy:"凉山",lv:"其他",nm:"西昌春城口腔门诊部有限公司",ac:1},{cy:"凉山",lv:"其他",nm:"牙博士口腔",ac:1},{cy:"宜宾",lv:"其他",nm:"宜宾叙州区为笑口腔门诊部有限公司",ac:1},{cy:"德阳",lv:"其他",nm:"中江一诺口腔门诊部有限公司",ac:0},{cy:"资阳",lv:"其他",nm:"资阳齿康牙米口腔门诊部有限公司",ac:0},{cy:"自贡",lv:"其他",nm:"自贡德立口腔门诊部有限责任公司",ac:1}],"安徽区":[{cy:"合肥",lv:"二线",nm:"安徽贝杰",ac:0},{cy:"合肥",lv:"二线",nm:"合肥咿博口腔医疗有限公司",ac:0},{cy:"合肥",lv:"二线",nm:"安徽渡江口腔医院集团有限公司合肥市蜀山区口腔门诊部",ac:0},{cy:"阜阳",lv:"其他",nm:"阜阳爱齿口腔门诊部有限公司",ac:0},{cy:"阜阳",lv:"其他",nm:"阜阳牙小象口腔门诊有限公司",ac:0},{cy:"六安",lv:"其他",nm:"六安竹子口腔医院有限公司",ac:1},{cy:"马鞍山",lv:"其他",nm:"马鞍山市麦芽儿口腔医疗有限责任公司",ac:0},{cy:"安庆",lv:"其他",nm:"安庆朱小龙口腔医院",ac:1},{cy:"合肥",lv:"二线",nm:"合肥卓雅口腔门诊有限公司",ac:0},{cy:"合肥",lv:"二线",nm:"安徽贝杰",ac:0},{cy:"淮南",lv:"其他",nm:"淮南亚安口腔医院有限公司",ac:0},{cy:"淮北",lv:"其他",nm:"淮北博爱口腔医院",ac:1},{cy:"合肥",lv:"二线",nm:"合肥佳冠口腔医院有限公司政务区分公司",ac:0},{cy:"阜阳",lv:"其他",nm:"颍上尚美口腔诊所有限公司",ac:0},{cy:"宣城",lv:"其他",nm:"宣城宛陵口腔门诊有限公司",ac:0},{cy:"阜阳",lv:"其他",nm:"安徽郭丽口腔医疗服务有限公司",ac:0},{cy:"芜湖",lv:"其他",nm:"芜湖市增辉口腔门诊部有限公司",ac:0},{cy:"芜湖",lv:"其他",nm:"芜湖明德口腔门诊部有限公司",ac:0},{cy:"宣城",lv:"其他",nm:"广德阳光口腔医院有限公司",ac:0},{cy:"宣城",lv:"其他",nm:"宣城市口腔医院有限公司",ac:1},{cy:"池州",lv:"其他",nm:"池州口腔医院有限公司",ac:1},{cy:"安庆",lv:"其他",nm:"桐城市口腔医院有限公司",ac:0},{cy:"蚌埠",lv:"其他",nm:"蚌埠淮海口腔医院有限公司",ac:0},{cy:"淮南",lv:"其他",nm:"安徽杰美口腔医疗有限公司",ac:0},{cy:"淮南",lv:"其他",nm:"精安通口腔诊所(淮南)有限公司",ac:0},{cy:"合肥",lv:"二线",nm:"安徽贝尔口腔门诊部有限公司",ac:0},{cy:"宣城",lv:"其他",nm:"宣城为民口腔医院有限公司",ac:0},{cy:"阜阳",lv:"其他",nm:"阜阳永笑爱齿口腔门诊有限公司",ac:0},{cy:"阜阳",lv:"其他",nm:"阜阳美欧口腔门诊部有限公司",ac:0},{cy:"宿州",lv:"其他",nm:"宿州康桥口腔门诊部有限公司",ac:0},{cy:"合肥",lv:"二线",nm:"合肥松丰医疗科技有限公司",ac:0},{cy:"铜陵",lv:"其他",nm:"铜陵渡江口腔医院",ac:1},{cy:"安庆",lv:"其他",nm:"安庆渡江口腔医院",ac:1},{cy:"阜阳",lv:"其他",nm:"太和德立口腔诊所有限公司",ac:0},{cy:"池州",lv:"其他",nm:"池州康诺口腔门诊部有限公司",ac:1},{cy:"六安",lv:"其他",nm:"六安悦牙口腔门诊部有限公司",ac:1},{cy:"芜湖",lv:"其他",nm:"芜湖美臣口腔门诊部有限公司九华中路分公司",ac:0},{cy:"滁州",lv:"其他",nm:"明光牙博仕口腔门诊有限公司",ac:0},{cy:"马鞍山",lv:"其他",nm:"马鞍山市牙百佳口腔医疗有限公司秀山分公司",ac:1},{cy:"铜陵",lv:"其他",nm:"铜陵惠众口腔门诊部有限公司",ac:0},{cy:"滁州",lv:"其他",nm:"安徽省摩汀口腔门诊有限公司",ac:0},{cy:"宣城",lv:"其他",nm:"宣城大医医院有限公司",ac:1},{cy:"滁州",lv:"其他",nm:"天长诺美克口腔门诊有限公司",ac:0},{cy:"芜湖",lv:"其他",nm:"芜湖美臣口腔门诊部有限公司",ac:0},{cy:"六安",lv:"其他",nm:"六安竹子口腔医院有限公司万达分公司",ac:0},{cy:"六安",lv:"其他",nm:"六安市雅悦口腔医院有限公司",ac:1}],"山东区":[{cy:"青岛",lv:"二线",nm:"优诺",ac:0},{cy:"青岛",lv:"二线",nm:"优诺",ac:1},{cy:"青岛",lv:"二线",nm:"优诺",ac:0},{cy:"济南",lv:"三线",nm:"山东可恩",ac:0},{cy:"泰安",lv:"其他",nm:"牙博士口腔",ac:0},{cy:"济南",lv:"三线",nm:"拜博口腔",ac:0},{cy:"烟台",lv:"其他",nm:"烟台妍玉口腔门诊有限公司",ac:1},{cy:"临沂",lv:"其他",nm:"蒙阴百姓口腔诊所有限公司",ac:0},{cy:"威海",lv:"其他",nm:"威海汇恩口腔门诊部有限公司第一分公司",ac:0},{cy:"德州",lv:"其他",nm:"齐河晨兴口腔医院有限公司",ac:0},{cy:"德州",lv:"其他",nm:"山东可恩",ac:1},{cy:"德州",lv:"其他",nm:"德州致雅口腔医院有限公司",ac:0},{cy:"青岛",lv:"二线",nm:"青岛维乐利口腔门诊有限公司市北新都心门诊部",ac:0},{cy:"烟台",lv:"其他",nm:"德韩口腔",ac:1},{cy:"淄博",lv:"其他",nm:"山东盛德仁口腔医疗有限公司临淄盛德仁淄江口腔门诊部",ac:0},{cy:"日照",lv:"其他",nm:"日照未来口腔门诊部有限公司",ac:0},{cy:"青岛",lv:"二线",nm:"牙博士口腔",ac:0},{cy:"烟台",lv:"其他",nm:"龙口正大光明眼科医院有限责任公司",ac:0},{cy:"济南",lv:"三线",nm:"山东可恩",ac:0},{cy:"青岛",lv:"二线",nm:"青岛优贝口腔医疗有限公司",ac:0},{cy:"淄博",lv:"其他",nm:"山东格美臻口腔医院有限公司淄博高新孙孟口腔门诊部",ac:0},{cy:"济南",lv:"三线",nm:"济南景先军口腔医疗有限公司莱芜口腔门诊部",ac:0},{cy:"烟台",lv:"其他",nm:"德韩口腔",ac:0},{cy:"枣庄",lv:"其他",nm:"枣庄市中附大口腔门诊部有限公司",ac:0},{cy:"临沂",lv:"其他",nm:"临沂兰山萨博口腔门诊部有限公司",ac:0},{cy:"青岛",lv:"二线",nm:"青岛皙博士医疗美容有限公司李沧皙博士口腔诊所",ac:0},{cy:"日照",lv:"其他",nm:"山东微笑口腔医院有限公司",ac:1},{cy:"威海",lv:"其他",nm:"区域中诺",ac:1},{cy:"菏泽",lv:"其他",nm:"菏泽华忠口腔医院有限公司",ac:1},{cy:"济宁",lv:"其他",nm:"曲阜好美牙口腔门诊部有限公司",ac:1},{cy:"青岛",lv:"二线",nm:"青岛皓贝德皓雅医疗服务有限公司",ac:0},{cy:"青岛",lv:"二线",nm:"青岛笑合口腔医疗有限公司",ac:0},{cy:"菏泽",lv:"其他",nm:"山东恒贝医疗管理有限公司菏泽华英路口腔门诊部",ac:0},{cy:"青岛",lv:"二线",nm:"山东可恩",ac:0},{cy:"威海",lv:"其他",nm:"威海晓静口腔服务有限公司文登峰山路口腔门诊部",ac:0},{cy:"青岛",lv:"二线",nm:"青岛王台泉云口腔医疗有限公司",ac:0},{cy:"日照",lv:"其他",nm:"日照博恩口腔门诊部有限公司",ac:1},{cy:"临沂",lv:"其他",nm:"费县冠军口腔门诊部有限公司",ac:0},{cy:"烟台",lv:"其他",nm:"烟台洛神牙管家口腔医院有限公司",ac:1},{cy:"菏泽",lv:"其他",nm:"菏泽镡曹州口腔医疗有限公司镡曹州口腔门诊部",ac:0},{cy:"烟台",lv:"其他",nm:"烟台拜尼科口腔门诊部有限公司",ac:0},{cy:"聊城",lv:"其他",nm:"聊城市领航口腔医院有限公司",ac:1},{cy:"滨州",lv:"其他",nm:"滨州瑞佳口腔医院有限公司",ac:0},{cy:"济宁",lv:"其他",nm:"济宁市任城区玉红口腔医疗有限公司",ac:0},{cy:"潍坊",lv:"三线",nm:"山东可恩",ac:0},{cy:"淄博",lv:"其他",nm:"淄博张店怡海名人启贝口腔门诊部有限公司",ac:0},{cy:"济南",lv:"三线",nm:"济南雅辰口腔医院有限公司",ac:0},{cy:"泰州",lv:"其他",nm:"泰州笑更美口腔门诊有限公司",ac:0},{cy:"威海",lv:"其他",nm:"山东曙光",ac:1},{cy:"威海",lv:"其他",nm:"乳山牙博仕口腔门诊部有限公司",ac:1},{cy:"济南",lv:"三线",nm:"联合博士口腔医疗(山东)有限公司市中联合博士口腔门诊部",ac:0},{cy:"烟台",lv:"其他",nm:"胶东半岛口腔医院(烟台)有限公司",ac:0},{cy:"济南",lv:"三线",nm:"好牙众享(济南)医院管理有限公司历下口腔门诊部",ac:0},{cy:"威海",lv:"其他",nm:"荣成牙博仕口腔门诊部有限公司",ac:1},{cy:"潍坊",lv:"三线",nm:"中科牙谷(潍坊)口腔医院有限公司",ac:0},{cy:"潍坊",lv:"其他",nm:"青州益青口腔医疗有限责任公司",ac:0},{cy:"潍坊",lv:"三线",nm:"潍坊华贝口腔医疗有限公司",ac:1}],"广东区":[{cy:"东莞",lv:"二线",nm:"东莞东城固德口腔门诊部有限公司",ac:0},{cy:"东莞",lv:"二线",nm:"东莞市植德好口腔门诊部有限公司",ac:0},{cy:"东莞",lv:"二线",nm:"东莞塘厦固德口腔门诊有限公司",ac:1},{cy:"韶关",lv:"其他",nm:"韶关市牙乐康企业管理有限公司",ac:0},{cy:"茂名",lv:"其他",nm:"茂名致美口腔医院有限公司",ac:1},{cy:"珠海",lv:"三线",nm:"珠海市楚星口腔诊所有限公司",ac:0},{cy:"珠海",lv:"三线",nm:"珠海市暨博口腔医院有限公司",ac:1},{cy:"东莞",lv:"二线",nm:"东莞市东城莞大口腔门诊部有限公司",ac:0},{cy:"佛山",lv:"三线",nm:"佛山市顺齿口腔门诊有限公司",ac:0},{cy:"珠海",lv:"三线",nm:"珠海六和",ac:0},{cy:"中山",lv:"三线",nm:"中山暨博口腔医院有限公司",ac:0},{cy:"汕头",lv:"三线",nm:"汕头口腔医疗中心有限公司",ac:0},{cy:"惠州",lv:"三线",nm:"博罗舒适达口腔门诊有限公司",ac:0},{cy:"佛山",lv:"三线",nm:"佛山市顺德口腔医院有限公司",ac:0},{cy:"汕头",lv:"三线",nm:"汕头市汕口口腔医疗有限公司",ac:0},{cy:"惠州",lv:"三线",nm:"惠州尚惠口腔门诊有限公司",ac:0},{cy:"中山",lv:"三线",nm:"中山市爱雅口腔门诊有限公司",ac:0},{cy:"阳江",lv:"其他",nm:"阳江华康口腔医院有限公司",ac:1},{cy:"惠州",lv:"三线",nm:"惠州市惠城瑞芙臣口腔门诊有限公司",ac:0},{cy:"东莞",lv:"二线",nm:"东莞市恒好汇一城口腔门诊有限公司",ac:0},{cy:"东莞",lv:"二线",nm:"东莞大朗长盛恒生口腔门诊部有限公司",ac:0},{cy:"佛山",lv:"三线",nm:"佛山市牙管家医疗投资有限公司",ac:0},{cy:"东莞",lv:"二线",nm:"东莞南城国贸口腔门诊有限公司",ac:1},{cy:"韶关",lv:"其他",nm:"韶关芽管家口腔有限公司",ac:1},{cy:"东莞",lv:"二线",nm:"东莞市叶子口腔门诊有限公司",ac:0},{cy:"肇庆",lv:"三线",nm:"肇庆市牙精英医疗科技有限公司端州嘉湖口腔门诊部",ac:0},{cy:"河源",lv:"其他",nm:"拜博口腔",ac:1},{cy:"东莞",lv:"二线",nm:"东莞市塘厦优贝口腔门诊部有限公司",ac:0},{cy:"东莞",lv:"二线",nm:"东莞南城美利口腔门诊部有限公司",ac:0},{cy:"阳江",lv:"其他",nm:"阳江阳东爱牙口腔门诊有限公司",ac:1},{cy:"东莞",lv:"二线",nm:"东莞东城百德口腔门诊部有限公司",ac:1},{cy:"佛山",lv:"三线",nm:"佛山市南海好佰年粤秀口腔门诊部有限公司",ac:0},{cy:"韶关",lv:"其他",nm:"韶关韶南口腔有限公司",ac:1},{cy:"惠州",lv:"三线",nm:"惠州致美口腔医院有限公司",ac:1},{cy:"惠州",lv:"三线",nm:"深惠口腔门诊(惠州市惠阳区)有限公司",ac:1},{cy:"东莞",lv:"二线",nm:"东莞大岭山好佰年领秀口腔门诊部有限公司",ac:0},{cy:"珠海",lv:"三线",nm:"珠海市海精灵齿科口腔门诊有限公司",ac:0},{cy:"东莞",lv:"二线",nm:"东莞市南城恒好口腔门诊有限公司",ac:0},{cy:"佛山",lv:"三线",nm:"佛山中大口腔医院有限公司",ac:0},{cy:"佛山",lv:"三线",nm:"佛山珠江佳洁口腔门诊有限公司",ac:0},{cy:"惠州",lv:"三线",nm:"惠州市正一口腔门诊有限公司",ac:0},{cy:"东莞",lv:"二线",nm:"东莞南城莞嘉口腔门诊部有限公司",ac:0},{cy:"湛江",lv:"三线",nm:"湛江市珠江口腔医院经营管理有限公司",ac:0},{cy:"佛山",lv:"三线",nm:"佛山市爱顿口腔门诊有限公司",ac:0},{cy:"珠海",lv:"三线",nm:"珠海健和诺贝尔口腔门诊部有限公司",ac:0},{cy:"珠海",lv:"三线",nm:"珠海诺贝尔口腔门诊部有限公司",ac:1},{cy:"中山",lv:"三线",nm:"中山好民生口腔门诊部有限公司",ac:1},{cy:"清远",lv:"其他",nm:"清远市粤美医院管理技术有限公司清城口腔门诊部",ac:1},{cy:"中山",lv:"三线",nm:"中山石岐简牙口腔医院有限公司",ac:1},{cy:"清远",lv:"其他",nm:"清远爱雅仕口腔医院有限公司天湖郦都口腔门诊部",ac:0},{cy:"东莞",lv:"二线",nm:"牙博士口腔",ac:0}],"桂黔琼区":[{cy:"贵阳",lv:"其他",nm:"贵州省遵义市齿名仕口腔门诊部有限公司",ac:0},{cy:"贵阳",lv:"三线",nm:"贵阳观山湖朗朗口腔门诊部有限公司",ac:0},{cy:"毕节",lv:"其他",nm:"毕节市七星关区鑫瑞朗朗口腔门诊部有限公司",ac:0},{cy:"六盘水",lv:"其他",nm:"六盘水钟山朗朗口腔门诊有限公司",ac:0},{cy:"贵阳",lv:"三线",nm:"牙博士口腔",ac:0},{cy:"遵义",lv:"其他",nm:"贵州康贝口腔医疗管理有限公司",ac:0},{cy:"遵义",lv:"其他",nm:"贵州遵义市红花岗金科口腔门诊部有限公司",ac:0},{cy:"海口",lv:"其他",nm:"海南口腔医院有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海南微笑口腔医院有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海口琼州妇女儿童医院有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海南植之道南沙路门诊部有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海南植之道南沙路门诊部有限公司龙华口腔门诊部",ac:0},{cy:"海口",lv:"三线",nm:"海南牙世家口腔医院管理有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海南爱牙口腔医院有限公司",ac:0},{cy:"海口",lv:"三线",nm:"西安未央润和军海口腔门诊部有限公司",ac:0},{cy:"柳州",lv:"三线",nm:"柳州市德立口腔医院有限公司东院分公司",ac:0},{cy:"南宁",lv:"三线",nm:"南宁诺贝尔",ac:0},{cy:"南宁",lv:"三线",nm:"牙博士口腔",ac:0},{cy:"崇左",lv:"其他",nm:"南宁诺贝尔",ac:0},{cy:"南宁",lv:"三线",nm:"南宁牙贝尔口腔门诊部有限公司",ac:0},{cy:"百色",lv:"其他",nm:"广西百色雅贝恩口腔门诊部有限公司",ac:0},{cy:"来宾",lv:"其他",nm:"来宾市喜美口腔有限公司",ac:0},{cy:"百色",lv:"其他",nm:"广西田东县苏医生口腔门诊有限责任公司",ac:0},{cy:"南宁",lv:"三线",nm:"柏乐口腔",ac:0},{cy:"南宁",lv:"三线",nm:"广西蓝天",ac:0},{cy:"南宁",lv:"三线",nm:"柏乐口腔",ac:0},{cy:"柳州",lv:"三线",nm:"柳州牙管家口腔门诊部有限公司",ac:0},{cy:"南宁",lv:"三线",nm:"牙博士口腔",ac:0},{cy:"崇左",lv:"其他",nm:"扶绥诺贝尔口腔诊所有限公司",ac:0},{cy:"百色",lv:"其他",nm:"靖西荣代口腔门诊部有限责任公司",ac:0},{cy:"梧州",lv:"其他",nm:"广西蓝天",ac:0},{cy:"北海",lv:"其他",nm:"牙博士口腔",ac:0},{cy:"南宁",lv:"三线",nm:"南宁德维口腔门诊部有限公司",ac:0},{cy:"南宁",lv:"三线",nm:"南宁同步口腔门诊部有限公司",ac:0},{cy:"百色",lv:"其他",nm:"广西蓝天",ac:0},{cy:"南宁",lv:"三线",nm:"牙博士口腔",ac:0},{cy:"铜仁",lv:"其他",nm:"铜仁碧江朗朗口腔门诊部有限公司",ac:0},{cy:"贵阳",lv:"三线",nm:"牙博士口腔",ac:0},{cy:"毕节",lv:"其他",nm:"纳雍一六八口腔门诊部有限公司",ac:0},{cy:"毕节",lv:"其他",nm:"毕节七星关华睿口腔门诊有限公司",ac:0},{cy:"毕节",lv:"其他",nm:"毕节七星关花贝口腔门诊部有限公司",ac:0},{cy:"毕节",lv:"其他",nm:"贵州盛华口腔医院管理有限公司",ac:0},{cy:"贵阳",lv:"三线",nm:"牙博士口腔",ac:0},{cy:"贵阳",lv:"其他",nm:"德韩口腔",ac:0},{cy:"黔东南",lv:"其他",nm:"凯里京州口腔门诊有限公司",ac:0},{cy:"六盘水",lv:"其他",nm:"六盘水爱民京州口腔门诊有限公司",ac:0},{cy:"黔东南",lv:"其他",nm:"三穗雅卫士口腔门诊有限责任公司",ac:0},{cy:"铜仁",lv:"其他",nm:"石阡医口健口腔医院有限公司",ac:0},{cy:"毕节",lv:"其他",nm:"毕节市七星关区惠诚口腔门诊部有限公司",ac:0},{cy:"黔西南",lv:"其他",nm:"黔西南州牙管家口腔门诊部有限公司",ac:0},{cy:"贵阳",lv:"三线",nm:"贵州丽齿口腔医院有限公司花果园口腔门诊部",ac:0},{cy:"贵阳",lv:"其他",nm:"贵州省遵义市齿名仕口腔门诊部有限公司",ac:0},{cy:"贵阳",lv:"三线",nm:"贵阳观山湖朗朗口腔门诊部有限公司",ac:0},{cy:"毕节",lv:"其他",nm:"毕节市七星关区鑫瑞朗朗口腔门诊部有限公司",ac:0},{cy:"六盘水",lv:"其他",nm:"六盘水钟山朗朗口腔门诊有限公司",ac:0},{cy:"贵阳",lv:"三线",nm:"牙博士口腔",ac:0},{cy:"遵义",lv:"其他",nm:"贵州康贝口腔医疗管理有限公司",ac:0},{cy:"遵义",lv:"其他",nm:"贵州遵义市红花岗金科口腔门诊部有限公司",ac:0},{cy:"海口",lv:"其他",nm:"海南口腔医院有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海南微笑口腔医院有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海口琼州妇女儿童医院有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海南植之道南沙路门诊部有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海南植之道南沙路门诊部有限公司龙华口腔门诊部",ac:0},{cy:"海口",lv:"三线",nm:"海南牙世家口腔医院管理有限公司",ac:0},{cy:"海口",lv:"三线",nm:"海南爱牙口腔医院有限公司",ac:0},{cy:"海口",lv:"三线",nm:"西安未央润和军海口腔门诊部有限公司",ac:0}],"江苏区":[{cy:"宿迁",lv:"其他",nm:"江苏金铂利",ac:0},{cy:"镇江",lv:"其他",nm:"拜博口腔",ac:0},{cy:"泰州",lv:"其他",nm:"靖江艾齿嘉口腔门诊部有限公司",ac:0},{cy:"南通",lv:"三线",nm:"南通市海门嘉仁口腔门诊有限公司",ac:0},{cy:"镇江",lv:"其他",nm:"众亿口腔诊所(扬中)有限公司",ac:0},{cy:"南通",lv:"三线",nm:"南通新杏口腔医疗有限公司碧桂园分公司",ac:0},{cy:"泰州",lv:"其他",nm:"泰兴艾齿嘉口腔门诊部有限公司吾悦广场口腔门诊部",ac:0},{cy:"南通",lv:"三线",nm:"南通市海门玉蕙口腔医院有限公司",ac:0},{cy:"扬州",lv:"其他",nm:"仪征牙管家口腔门诊部有限公司",ac:0},{cy:"淮安",lv:"其他",nm:"江苏牙知道",ac:0},{cy:"盐城",lv:"其他",nm:"美莱",ac:0},{cy:"南通",lv:"三线",nm:"南通美院长口腔门诊部有限公司",ac:0},{cy:"苏州",lv:"其他",nm:"常熟玉蕙口腔医院有限公司",ac:0},{cy:"徐州",lv:"三线",nm:"徐州鼎植口腔医院有限责任公司",ac:0},{cy:"无锡",lv:"其他",nm:"江阴大熊先生口腔门诊部有限公司",ac:0},{cy:"无锡",lv:"二线",nm:"无锡博槐口腔门诊有限公司",ac:0},{cy:"扬州",lv:"其他",nm:"江苏金铂利",ac:0},{cy:"盐城",lv:"其他",nm:"阜宁鼎植口腔医院有限公司",ac:0},{cy:"常州",lv:"三线",nm:"常州金坛治平口腔门诊医疗有限责任公司",ac:0},{cy:"盐城",lv:"其他",nm:"盐城鼎植口腔门诊有限公司凤凰口腔门诊部",ac:0},{cy:"淮安",lv:"其他",nm:"淮安艾可维口腔有限公司",ac:0},{cy:"常州",lv:"三线",nm:"江苏北极星",ac:1},{cy:"盐城",lv:"其他",nm:"固德熊猫口腔门诊部东台有限公司",ac:1},{cy:"徐州",lv:"三线",nm:"徐州泉美诺恩口腔医院有限公司",ac:0},{cy:"镇江",lv:"其他",nm:"镇江市京口区康洁口腔门诊部",ac:1},{cy:"常州",lv:"三线",nm:"江苏金铂利",ac:0},{cy:"常州",lv:"其他",nm:"江苏北极星",ac:1},{cy:"无锡",lv:"其他",nm:"宜兴市晟诺口腔门诊有限公司",ac:0},{cy:"淮安",lv:"其他",nm:"淮安诺贝尔优诺口腔门诊部有限公司",ac:0},{cy:"常州",lv:"三线",nm:"常州太平洋口腔门诊部有限公司",ac:0},{cy:"南通",lv:"三线",nm:"南通皓尔美口腔医院有限公司",ac:1},{cy:"无锡",lv:"二线",nm:"无锡永康口腔门诊有限公司",ac:1},{cy:"扬州",lv:"其他",nm:"扬州松柏口腔门诊部有限公司",ac:0},{cy:"南通",lv:"其他",nm:"海安玉蕙口腔医院有限公司",ac:0},{cy:"南通",lv:"三线",nm:"南通玉蕙口腔医院有限公司",ac:0},{cy:"常州",lv:"其他",nm:"溧阳华尔康口腔诊所有限公司",ac:0},{cy:"徐州",lv:"其他",nm:"邳州博医口腔门诊部有限公司",ac:1},{cy:"镇江",lv:"其他",nm:"镇江市丹阳市麦雅口腔门诊有限公司",ac:0},{cy:"淮安",lv:"其他",nm:"淮安市牙管家口腔门诊有限公司",ac:0},{cy:"镇江",lv:"其他",nm:"镇江维乐口腔门诊部有限公司",ac:1},{cy:"泰州",lv:"其他",nm:"泰兴牙博仕口腔门诊医疗有限公司迎幸口腔门诊部",ac:0},{cy:"扬州",lv:"其他",nm:"扬州贝恩口腔医院有限公司高邮口腔门诊部",ac:1},{cy:"南通",lv:"其他",nm:"如皋牙医博世口腔门诊部有限公司大润发店",ac:1},{cy:"镇江",lv:"其他",nm:"镇江市丹徒区牙洁仕口腔门诊部有限公司",ac:0},{cy:"苏州",lv:"其他",nm:"常熟安澜隆盈口腔门诊部有限公司",ac:1},{cy:"连云港",lv:"其他",nm:"连云港成宏口腔医院有限公司",ac:1},{cy:"无锡",lv:"其他",nm:"江阴弘雅口腔医疗有限公司",ac:0},{cy:"常州",lv:"其他",nm:"溧阳牙卫士口腔诊所有限公司",ac:0},{cy:"无锡",lv:"二线",nm:"无锡齐美口腔门诊部有限公司",ac:0},{cy:"扬州",lv:"其他",nm:"扬州扬京口腔门诊有限公司",ac:1},{cy:"镇江",lv:"其他",nm:"扬中市牙院长口腔门诊有限公司",ac:0},{cy:"徐州",lv:"三线",nm:"徐州博奥口腔门诊有限公司",ac:0},{cy:"无锡",lv:"二线",nm:"无锡清扬路佳士洁口腔门诊有限公司",ac:0},{cy:"无锡",lv:"二线",nm:"无锡牙坐标水秀口腔门诊有限公司",ac:0},{cy:"无锡",lv:"其他",nm:"宜兴华齿口腔门诊部有限公司",ac:0},{cy:"盐城",lv:"其他",nm:"盐城倍美永康口腔门诊有限公司",ac:1},{cy:"盐城",lv:"其他",nm:"东台雅芽口腔有限公司",ac:0},{cy:"镇江",lv:"其他",nm:"丹阳康洁爱齿口腔有限公司",ac:0},{cy:"南通",lv:"其他",nm:"如皋市牙卫士口腔门诊有限公司",ac:0},{cy:"镇江",lv:"其他",nm:"镇江家齿口腔诊所有限公司",ac:1},{cy:"南通",lv:"其他",nm:"启东植得口腔门诊有限公司",ac:1},{cy:"苏州",lv:"其他",nm:"常熟中齿口腔门诊部有限公司",ac:0},{cy:"常州",lv:"三线",nm:"江苏北极星",ac:0},{cy:"扬州",lv:"其他",nm:"扬州牙管家口腔门诊有限公司",ac:1},{cy:"无锡",lv:"二线",nm:"无锡东亭维乐口腔门诊部有限公司",ac:1},{cy:"南通",lv:"其他",nm:"海安市牙卫士口腔门诊有限公司",ac:0},{cy:"常州",lv:"三线",nm:"市口仲致雅口腔门诊部(常州)有限公司",ac:0},{cy:"无锡",lv:"二线",nm:"无锡新吴维乐口腔门诊部有限公司",ac:1},{cy:"镇江",lv:"其他",nm:"江苏金铂利",ac:0}],"浙江区":[{cy:"宁波",lv:"其他",nm:"慈溪观海卫张氏口腔门诊部有限公司",ac:0},{cy:"宁波",lv:"其他",nm:"慈溪贝牙口腔门诊部有限公司",ac:1},{cy:"宁波",lv:"其他",nm:"慈溪鼎植口腔门诊部有限公司",ac:0},{cy:"宁波",lv:"其他",nm:"慈溪圣甬口腔门诊部有限公司",ac:0},{cy:"金华",lv:"其他",nm:"东阳亲齿口腔门诊部有限公司",ac:0},{cy:"嘉兴",lv:"其他",nm:"海宁圣麦口腔门诊部有限公司海洲海昌路口腔门诊部",ac:0},{cy:"嘉兴",lv:"其他",nm:"海宁圣麦口腔门诊部有限公司",ac:1},{cy:"嘉兴",lv:"其他",nm:"海盐圣禾口腔门诊部有限公司",ac:1},{cy:"湖州",lv:"其他",nm:"浙江复大",ac:1},{cy:"湖州",lv:"其他",nm:"咿呀英博",ac:1},{cy:"湖州",lv:"其他",nm:"德清牙美佳口腔诊所有限公司",ac:0},{cy:"湖州",lv:"其他",nm:"乐莎莎口腔",ac:0},{cy:"湖州",lv:"其他",nm:"浙江金铂利",ac:0},{cy:"湖州",lv:"其他",nm:"湖州雅植口腔诊所有限公司",ac:0},{cy:"湖州",lv:"其他",nm:"湖州南浔诺贝尔口腔门诊部有限公司",ac:1},{cy:"嘉兴",lv:"其他",nm:"浙江金铂利",ac:0},{cy:"嘉兴",lv:"其他",nm:"嘉兴市雅卫仕口腔门诊部有限责任公司",ac:0},{cy:"嘉兴",lv:"其他",nm:"嘉兴嘉诚口腔医院有限公司",ac:0},{cy:"嘉兴",lv:"其他",nm:"嘉兴麦芽口腔医疗有限公司",ac:1},{cy:"衢州",lv:"其他",nm:"江山市壹加口腔门诊部有限公司",ac:1},{cy:"金华",lv:"三线",nm:"永康德维口腔医院有限公司",ac:0},{cy:"金华",lv:"三线",nm:"金华市锋范口腔医院有限公司",ac:0},{cy:"金华",lv:"三线",nm:"浦江江南口腔医院有限公司",ac:0},{cy:"金华",lv:"三线",nm:"金华贝佳口腔诊所有限公司",ac:0},{cy:"金华",lv:"三线",nm:"金华江南馨园口腔医院有限公司",ac:0},{cy:"金华",lv:"三线",nm:"金华众悦口腔门诊有限公司",ac:1},{cy:"金华",lv:"三线",nm:"金华婺城口腔医院有限公司",ac:1},{cy:"丽水",lv:"其他",nm:"青田口腔医院有限公司",ac:1},{cy:"丽水",lv:"其他",nm:"丽水名禾口腔门诊部有限公司",ac:0},{cy:"丽水",lv:"其他",nm:"丽水亮贝美口腔门诊部有限公司",ac:1},{cy:"台州",lv:"其他",nm:"临海顶新口腔门诊部有限公司",ac:0},{cy:"台州",lv:"其他",nm:"临海德瓦口腔门诊部有限公司",ac:1},{cy:"宁波",lv:"二线",nm:"宁波鄞州首南桃源口腔门诊部有限公司",ac:1},{cy:"宁波",lv:"二线",nm:"美莱",ac:0},{cy:"宁波",lv:"二线",nm:"余姚华都口腔门诊部(普通合伙)",ac:0},{cy:"宁波",lv:"二线",nm:"宁波江北牙科医院有限公司",ac:0},{cy:"宁波",lv:"二线",nm:"宁波海曙牙科医院集团有限公司",ac:0},{cy:"宁波",lv:"二线",nm:"宁波北仑牙科医院有限公司",ac:0},{cy:"宁波",lv:"二线",nm:"宁波鄞州牙科医院集团有限公司",ac:0},{cy:"宁波",lv:"二线",nm:"浙江牙博士",ac:0},{cy:"衢州",lv:"其他",nm:"衢州江山口腔医院有限公司",ac:1},{cy:"衢州",lv:"其他",nm:"衢州市乐尔健康管理有限公司柯城鑫尔口腔诊所",ac:0},{cy:"衢州",lv:"其他",nm:"衢州六维口腔门诊部有限公司",ac:0},{cy:"衢州",lv:"其他",nm:"衢州牙微笑健康管理有限公司柯城西口口腔诊所",ac:0},{cy:"温州",lv:"其他",nm:"瑞安牙世佳口腔门诊部有限公司",ac:1},{cy:"绍兴",lv:"三线",nm:"浙江复大",ac:1},{cy:"绍兴",lv:"三线",nm:"绍兴柯桥牙科医院有限公司",ac:1},{cy:"绍兴",lv:"三线",nm:"绍兴上虞仁禾口腔门诊部有限公司",ac:0},{cy:"绍兴",lv:"其他",nm:"嵊州口腔医院有限公司",ac:1},{cy:"台州",lv:"三线",nm:"台州市路桥亚非口腔门诊部有限公司",ac:1},{cy:"台州",lv:"三线",nm:"玉环口腔医院有限公司",ac:1},{cy:"台州",lv:"三线",nm:"台州口腔医院有限公司",ac:0},{cy:"台州",lv:"三线",nm:"台州市路桥口腔医院有限公司",ac:0},{cy:"台州",lv:"三线",nm:"玉环康惠口腔门诊部有限公司",ac:0},{cy:"台州",lv:"三线",nm:"台州市康贝佳口腔医院有限公司",ac:0},{cy:"台州",lv:"三线",nm:"台州府城口腔医院有限公司",ac:0},{cy:"台州",lv:"三线",nm:"台州优佳口腔门诊有限公司",ac:0},{cy:"温州",lv:"其他",nm:"泰顺牙贝恩口腔门诊部有限公司",ac:1},{cy:"杭州",lv:"其他",nm:"桐庐精益口腔门诊部有限公司",ac:0},{cy:"嘉兴",lv:"其他",nm:"桐乡松丰口腔门诊部有限公司",ac:1},{cy:"台州",lv:"其他",nm:"温岭城东朗德口腔门诊部有限公司",ac:1},{cy:"温州",lv:"三线",nm:"温州市鹿城区蓝芽口腔门诊部有限公司",ac:1},{cy:"温州",lv:"三线",nm:"温州鹿城口腔医院有限公司",ac:1},{cy:"温州",lv:"三线",nm:"温州鹿城一诺口腔门诊部有限公司",ac:1},{cy:"温州",lv:"三线",nm:"温州口腔医院有限公司",ac:1},{cy:"温州",lv:"三线",nm:"平阳贝壳口腔门诊部有限公司",ac:0},{cy:"宁波",lv:"其他",nm:"象山丹城口腔医院有限公司",ac:1},{cy:"金华",lv:"其他",nm:"义乌牙科医院有限公司",ac:1},{cy:"金华",lv:"其他",nm:"义乌众牙口腔门诊部有限公司",ac:0},{cy:"金华",lv:"其他",nm:"义乌德维口腔医院有限公司",ac:0},{cy:"金华",lv:"其他",nm:"义乌傅氏口腔门诊部有限公司",ac:0},{cy:"宁波",lv:"其他",nm:"余姚冠扬口腔门诊部有限公司",ac:1},{cy:"宁波",lv:"其他",nm:"余姚三禾口腔诊所有限公司",ac:0},{cy:"绍兴",lv:"其他",nm:"诸暨浙绍口腔门诊有限公司",ac:0}],"湖南区":[{cy:"怀化",lv:"其他",nm:"怀化市迎丰雅贝康口腔门诊有限公司",ac:0},{cy:"株洲",lv:"其他",nm:"攸县雅贝康口腔医院有限公司",ac:0},{cy:"常德",lv:"其他",nm:"汉寿张波口腔医院有限公司",ac:0},{cy:"长沙",lv:"二线",nm:"长沙市天心区好牙依友谊口腔门诊有限公司",ac:0},{cy:"长沙",lv:"二线",nm:"美奥口腔",ac:0},{cy:"长沙",lv:"二线",nm:"长沙牙祖口腔门诊部有限公司",ac:0},{cy:"株洲",lv:"其他",nm:"长沙优伢仕",ac:0},{cy:"娄底",lv:"其他",nm:"娄底市乐朗口腔医院有限公司",ac:0},{cy:"常德",lv:"其他",nm:"临澧张波口腔门诊有限公司",ac:0},{cy:"长沙",lv:"二线",nm:"长沙市岳麓区好牙依梅溪湖口腔门诊有限公司",ac:0},{cy:"娄底",lv:"其他",nm:"娄底爱牙邦口腔医院有限公司",ac:0},{cy:"长沙",lv:"二线",nm:"长沙高新开发区牙祖口腔门诊部有限公司",ac:0},{cy:"湘潭",lv:"其他",nm:"湘乡民铭口腔医院有限公司",ac:0},{cy:"湘潭",lv:"其他",nm:"湘潭贝壳口腔有限公司",ac:0},{cy:"株洲",lv:"其他",nm:"区域中诺",ac:1},{cy:"长沙",lv:"二线",nm:"长沙市雨花区牙大夫口腔门诊部有限公司",ac:0},{cy:"株洲",lv:"其他",nm:"株洲市天元区家鸿口腔门诊有限公司",ac:0},{cy:"邵阳",lv:"其他",nm:"邵阳塘渡口钰龙口腔医院(普通合伙)",ac:0},{cy:"永州",lv:"其他",nm:"永州安牙舒星城口腔医院有限公司",ac:0},{cy:"株洲",lv:"其他",nm:"醴陵市人民口腔医院(普通合伙)",ac:0},{cy:"衡阳",lv:"其他",nm:"耒阳诺贝尔口腔门诊部有限公司",ac:0},{cy:"郴州",lv:"其他",nm:"永兴雅康口腔医院有限公司",ac:0},{cy:"娄底",lv:"其他",nm:"涟源牙牙口腔医院有限公司",ac:0},{cy:"怀化",lv:"其他",nm:"沅陵雅卫士口腔医院有限公司",ac:0},{cy:"怀化",lv:"其他",nm:"怀化唯雅口腔医院有限公司",ac:0},{cy:"衡阳",lv:"其他",nm:"长沙优伢仕",ac:1},{cy:"张家界",lv:"其他",nm:"张家界湘茜口腔医院有限责任公司",ac:0},{cy:"邵阳",lv:"其他",nm:"邵阳蔚来口腔有限公司",ac:1},{cy:"娄底",lv:"其他",nm:"新化健齿口腔医院",ac:0},{cy:"湘潭",lv:"其他",nm:"湘潭康贝口腔门诊有限公司",ac:0},{cy:"益阳",lv:"其他",nm:"湖南医联医疗管理有限公司益阳高新好牙医口腔门诊部",ac:0},{cy:"娄底",lv:"其他",nm:"娄底牙牙口腔医院有限公司",ac:0},{cy:"邵阳",lv:"其他",nm:"洞口雅尔康口腔医院有限公司",ac:0},{cy:"长沙",lv:"二线",nm:"湖南中惠时代口腔医院有限公司",ac:0},{cy:"邵阳",lv:"其他",nm:"新宁雅康口腔医院有限公司",ac:1},{cy:"益阳",lv:"其他",nm:"安化雅尔康口腔医院有限责任公司",ac:0},{cy:"湘西",lv:"其他",nm:"湘西口腔医院有限责任公司",ac:0},{cy:"永州",lv:"其他",nm:"永州安牙舒口腔有限公司",ac:1},{cy:"长沙",lv:"二线",nm:"长沙市雨花区雅尔口腔门诊部有限责任公司",ac:0},{cy:"怀化",lv:"其他",nm:"湖南丁香口腔门诊有限公司新晃分公司",ac:0},{cy:"怀化",lv:"其他",nm:"溆浦医口健口腔医院有限公司",ac:1},{cy:"邵阳",lv:"其他",nm:"邵东市雅贝康口腔门诊有限公司",ac:0},{cy:"长沙",lv:"二线",nm:"美奥口腔",ac:0},{cy:"永州",lv:"其他",nm:"道县雅尔康口腔医院有限责任公司",ac:1},{cy:"湘潭",lv:"其他",nm:"湘潭唯雅口腔医院有限公司",ac:1},{cy:"怀化",lv:"其他",nm:"怀化口腔医院有限公司",ac:0},{cy:"长沙",lv:"二线",nm:"长沙浩尚雅口腔有限公司芙蓉浩尚雅口腔诊所",ac:0},{cy:"岳阳",lv:"其他",nm:"长沙优伢仕",ac:0}],"福建区":[{cy:"福州",lv:"二线",nm:"福州美橙金山口腔门诊有限公司",ac:0},{cy:"福州",lv:"二线",nm:"福州海峡",ac:0},{cy:"厦门",lv:"三线",nm:"厦门思明禾伢口腔门诊部有限公司",ac:0},{cy:"宁德",lv:"其他",nm:"宁德浙牙口腔医院有限公司",ac:0},{cy:"泉州",lv:"其他",nm:"南安泉兴口腔门诊部有限公司",ac:0},{cy:"泉州",lv:"三线",nm:"牙博士口腔",ac:1},{cy:"福州",lv:"二线",nm:"永泰唯美口腔医疗有限公司",ac:0},{cy:"莆田",lv:"其他",nm:"莆田群益口腔医院管理有限公司",ac:0},{cy:"泉州",lv:"三线",nm:"泉州泉港优牙口腔门诊有限公司",ac:0},{cy:"泉州",lv:"三线",nm:"泉州市金榜口腔门诊部有限公司",ac:0},{cy:"泉州",lv:"三线",nm:"泉州丰泽安格尔口腔门诊部有限公司",ac:0},{cy:"宁德",lv:"其他",nm:"宁德康美诺口腔医院有限公司",ac:1},{cy:"厦门",lv:"三线",nm:"厦门同安佳美口腔门诊部",ac:0},{cy:"福州",lv:"二线",nm:"福州海峡",ac:0},{cy:"泉州",lv:"其他",nm:"晋江梅岭牙好口腔门诊部",ac:0},{cy:"泉州",lv:"三线",nm:"泉州丰泽区美特尔口腔门诊有限公司",ac:1},{cy:"宁德",lv:"其他",nm:"宁德市博仕口腔医院有限公司",ac:1},{cy:"福州",lv:"其他",nm:"福建呀哚口腔门诊有限公司",ac:1},{cy:"泉州",lv:"三线",nm:"泉州丰泽维乐云贝口腔门诊有限公司",ac:0},{cy:"厦门",lv:"三线",nm:"厦门集美维恩君艺口腔门诊部有限公司",ac:0},{cy:"莆田",lv:"其他",nm:"莆田君特口腔门诊有限公司",ac:0},{cy:"漳州",lv:"其他",nm:"漳浦欣牙口腔门诊有限公司",ac:0},{cy:"厦门",lv:"三线",nm:"厦门思明美洁第二口腔门诊部有限公司",ac:0},{cy:"福州",lv:"二线",nm:"福州仓山晨洁旭辉口腔门诊部有限公司",ac:0},{cy:"厦门",lv:"三线",nm:"厦门同安银城口腔门诊部有限公司",ac:0},{cy:"莆田",lv:"其他",nm:"莆田长青口腔门诊部有限公司",ac:0},{cy:"莆田",lv:"其他",nm:"莆田市君正口腔门诊有限公司",ac:0},{cy:"漳州",lv:"其他",nm:"漳浦金豆子口腔门诊有限公司",ac:1},{cy:"龙岩",lv:"其他",nm:"龙岩闽西口腔医院有限公司",ac:1},{cy:"宁德",lv:"其他",nm:"宁德恒德口腔医院有限公司",ac:0},{cy:"厦门",lv:"三线",nm:"厦门湖里瑞恩口腔门诊部有限公司",ac:0},{cy:"泉州",lv:"其他",nm:"惠安县牙名仕口腔门诊部有限公司",ac:0},{cy:"厦门",lv:"三线",nm:"厦门湖里国同口腔门诊部有限公司",ac:0},{cy:"泉州",lv:"其他",nm:"南安海丝口腔门诊有限公司",ac:0},{cy:"厦门",lv:"三线",nm:"厦门思明思迈尔口腔门诊部有限公司",ac:0},{cy:"莆田",lv:"其他",nm:"莆田市牙洁仕口腔门诊有限公司",ac:0},{cy:"漳州",lv:"其他",nm:"漳州固德口腔门诊部有限公司",ac:0},{cy:"泉州",lv:"其他",nm:"安溪贝成口腔门诊部有限公司",ac:0},{cy:"漳州",lv:"其他",nm:"漳州芗城美十洁口腔门诊有限公司",ac:0},{cy:"泉州",lv:"其他",nm:"晋江市修大夫口腔门诊部有限公司",ac:1},{cy:"宁德",lv:"其他",nm:"宁德中富口腔医院有限公司",ac:0},{cy:"漳州",lv:"其他",nm:"漳州卓德口腔门诊有限公司",ac:1},{cy:"厦门",lv:"三线",nm:"厦门海沧卓德伟业口腔门诊部有限公司",ac:1},{cy:"龙岩",lv:"其他",nm:"龙岩新罗天使口腔门诊有限责任公司",ac:1},{cy:"厦门",lv:"三线",nm:"厦门思明拜瑞口腔门诊部有限公司",ac:0},{cy:"厦门",lv:"三线",nm:"美莱",ac:0},{cy:"福州",lv:"其他",nm:"福清科尔口腔门诊部有限公司",ac:0},{cy:"南平",lv:"其他",nm:"建瓯优贝口腔门诊有限公司",ac:1},{cy:"宁德",lv:"其他",nm:"福鼎优贝口腔门诊有限公司",ac:1},{cy:"福州",lv:"其他",nm:"福清优贝口腔门诊部有限公司",ac:0},{cy:"泉州",lv:"三线",nm:"泉州丰泽植徳口腔门诊有限公司",ac:0},{cy:"莆田",lv:"其他",nm:"莆田市涵江区雅美佳口腔门诊部有限公司",ac:1},{cy:"泉州",lv:"三线",nm:"泉州丰泽美维口腔门诊有限公司",ac:1},{cy:"泉州",lv:"其他",nm:"南安贝成口腔门诊部有限公司",ac:1},{cy:"厦门",lv:"三线",nm:"厦门思明国同口腔门诊部有限公司",ac:1},{cy:"泉州",lv:"其他",nm:"晋江市青阳贝成口腔门诊部有限公司",ac:1},{cy:"漳州",lv:"其他",nm:"漳州市芽哩口腔门诊有限公司",ac:0},{cy:"泉州",lv:"其他",nm:"安溪艾美口腔门诊有限公司",ac:1},{cy:"福州",lv:"二线",nm:"福州爱尚贝臣口腔门诊部有限公司",ac:0},{cy:"福州",lv:"二线",nm:"福州台江兴维乐口腔门诊部有限公司",ac:0}],"西北区":[{cy:"兰州",lv:"三线",nm:"兰州康美口腔医院有限责任公司",ac:0},{cy:"兰州",lv:"三线",nm:"甘肃海涛口腔医院有限公司",ac:0},{cy:"天水",lv:"其他",nm:"天水松鼠口腔医疗科技有限公司",ac:1},{cy:"兰州",lv:"三线",nm:"兰州台牙迪萌口腔门诊部(普通合伙)",ac:0},{cy:"兰州",lv:"三线",nm:"兰州荣华海涛口腔医疗科技有限公司",ac:0},{cy:"兰州",lv:"三线",nm:"兰州惠尔安康齿科有限公司西固凯地口腔门诊部",ac:0},{cy:"武威",lv:"其他",nm:"武威牙博仕口腔门诊有限公司",ac:1},{cy:"兰州",lv:"三线",nm:"兰州嘉成海涛口腔医疗服务有限公司皋兰路门诊部",ac:0},{cy:"乌鲁木齐",lv:"三线",nm:"新疆丝路合和口腔门诊有限责任公司",ac:0},{cy:"乌鲁木齐",lv:"三线",nm:"美奥口腔",ac:0},{cy:"阿拉尔",lv:"其他",nm:"新疆博恩口腔医院有限公司",ac:0},{cy:"乌鲁木齐",lv:"三线",nm:"乌鲁木齐豪雅仁口腔医疗有限公司",ac:0},{cy:"乌鲁木齐",lv:"三线",nm:"新疆苏和口腔医院有限公司",ac:0}],"鄂赣区":[{cy:"黄冈",lv:"其他",nm:"罗田县艾齿口腔诊所有限公司",ac:0},{cy:"恩施",lv:"其他",nm:"恩施州恩东口腔医疗管理有限公司舞阳门诊部",ac:0},{cy:"荆门",lv:"其他",nm:"荆门小白兔口腔门诊有限公司",ac:1},{cy:"孝感",lv:"其他",nm:"安陆爱雅植贝口腔门诊部有限公司",ac:0},{cy:"黄冈",lv:"其他",nm:"黄梅县孔垄镇博牙口腔有限公司",ac:0},{cy:"荆州",lv:"其他",nm:"荆州丽贝齿口腔门诊有限公司",ac:0},{cy:"荆门",lv:"其他",nm:"荆门美维口腔门诊有限公司",ac:0},{cy:"荆门",lv:"其他",nm:"京山市京楚口腔门诊部有限公司",ac:0},{cy:"黄冈",lv:"其他",nm:"黄梅县省立医大口腔门诊有限公司",ac:0},{cy:"十堰",lv:"其他",nm:"湖北华玉口腔有限公司",ac:1},{cy:"黄冈",lv:"其他",nm:"黄冈中为中山口腔门诊有限公司",ac:0},{cy:"黄冈",lv:"其他",nm:"黄梅完美口腔门诊有限公司",ac:0},{cy:"宜昌",lv:"其他",nm:"咿呀英博",ac:0},{cy:"襄阳",lv:"其他",nm:"襄阳牙博仕口腔门诊部有限公司枣阳分公司",ac:0},{cy:"荆门",lv:"其他",nm:"咿呀英博",ac:1},{cy:"恩施",lv:"其他",nm:"咿呀英博",ac:0},{cy:"荆州",lv:"其他",nm:"荆州大众口腔医疗有限公司沙北门诊部",ac:0},{cy:"黄冈",lv:"其他",nm:"红安博牙口腔门诊部有限公司",ac:1},{cy:"咸宁",lv:"其他",nm:"咸宁湖科口腔医院有限公司第一门诊部",ac:0},{cy:"十堰",lv:"其他",nm:"胜元口腔医疗管理(湖北)有限公司",ac:0},{cy:"孝感",lv:"其他",nm:"汉川文华口腔门诊有限公司西湖路门诊部",ac:0},{cy:"随州",lv:"其他",nm:"随州牙管家口腔门诊有限公司曾都区烈山大道口腔门诊部",ac:0},{cy:"鄂州",lv:"其他",nm:"鄂州中山口腔医院有限公司滨湖桥门诊部",ac:0},{cy:"黄冈",lv:"其他",nm:"武穴中为中山口腔门诊有限公司",ac:1},{cy:"荆州",lv:"其他",nm:"区域中诺",ac:1},{cy:"荆门",lv:"其他",nm:"荆门维乐口腔医院有限公司",ac:0},{cy:"十堰",lv:"其他",nm:"茅箭区五堰从兵口腔专科门诊部",ac:0},{cy:"恩施",lv:"其他",nm:"咿呀英博",ac:0},{cy:"天门",lv:"其他",nm:"天门刘记口腔门诊有限公司",ac:1},{cy:"襄阳",lv:"其他",nm:"襄阳时代永恒口腔医疗管理有限公司立业路分公司",ac:0},{cy:"荆州",lv:"其他",nm:"咿呀英博",ac:1},{cy:"鄂州",lv:"其他",nm:"鄂州博德口腔门诊有限公司",ac:0},{cy:"宜昌",lv:"其他",nm:"宜昌市爱合口腔医院有限责任公司",ac:1},{cy:"随州",lv:"其他",nm:"随州汉植口腔门诊有限公司曾都区清河路口腔门诊部",ac:0},{cy:"荆门",lv:"其他",nm:"京山京小白口腔门诊有限公司",ac:0},{cy:"宜昌",lv:"其他",nm:"宜昌牙管家口腔医疗有限公司",ac:1},{cy:"仙桃",lv:"其他",nm:"仙桃民生中山口腔医院有限公司前通路分公司",ac:1},{cy:"潜江",lv:"其他",nm:"潜江湖科中山口腔医院有限公司",ac:1},{cy:"襄阳",lv:"其他",nm:"襄阳牙博仕口腔门诊部有限公司",ac:0},{cy:"十堰",lv:"其他",nm:"湖北省十堰市从兵口腔有限公司",ac:0},{cy:"黄石",lv:"其他",nm:"阳新民生中山口腔医院有限公司",ac:0},{cy:"荆门",lv:"其他",nm:"荆门中南口腔医院有限公司",ac:0},{cy:"景德镇",lv:"其他",nm:"景德镇博美口腔医疗管理有限公司",ac:0},{cy:"吉安",lv:"其他",nm:"吉安尚品口腔门诊有限公司",ac:1},{cy:"抚州",lv:"其他",nm:"南丰县牙博仕口腔门诊有限公司",ac:0},{cy:"上饶",lv:"其他",nm:"上饶口腔医院集团有限公司",ac:1},{cy:"上饶",lv:"其他",nm:"上饶市维乐阳光口腔医院有限公司",ac:0},{cy:"宜春",lv:"其他",nm:"高安麦芽口腔门诊有限公司",ac:0},{cy:"九江",lv:"其他",nm:"修水县中为中山口腔门诊有限公司",ac:1},{cy:"赣州",lv:"其他",nm:"赣州爱与民口腔医院有限公司",ac:0},{cy:"赣州",lv:"其他",nm:"赣州唯乐口腔医院有限公司",ac:1},{cy:"景德镇",lv:"其他",nm:"景德镇美阳口腔门诊部有限公司",ac:0},{cy:"景德镇",lv:"其他",nm:"景德镇瓷城口腔医院有限公司",ac:1},{cy:"宜春",lv:"其他",nm:"宜春康贝口腔门诊有限公司",ac:0},{cy:"赣州",lv:"其他",nm:"赣州时代百纳口腔医院有限公司",ac:0},{cy:"南昌",lv:"三线",nm:"拜博口腔",ac:0},{cy:"抚州",lv:"其他",nm:"抚州英伦口腔医院有限公司",ac:0},{cy:"赣州",lv:"其他",nm:"赣州施美尔口腔门诊有限公司",ac:0},{cy:"南昌",lv:"三线",nm:"南昌摩尔口腔医院有限公司",ac:0},{cy:"景德镇",lv:"其他",nm:"景德镇瓷都口腔医院管理有限责任公司",ac:0},{cy:"南昌",lv:"三线",nm:"南昌博德口腔医院有限公司",ac:0},{cy:"南昌",lv:"三线",nm:"南昌诺德口腔门诊部有限公司",ac:0},{cy:"南昌",lv:"三线",nm:"南昌虹桥口腔门诊部有限公司",ac:0},{cy:"萍乡",lv:"其他",nm:"萍乡牙佰年口腔门诊有限公司",ac:0},{cy:"赣州",lv:"其他",nm:"赣州贝壳口腔门诊部有限公司",ac:1},{cy:"九江",lv:"其他",nm:"九江中山口腔医院有限公司",ac:1},{cy:"南昌",lv:"三线",nm:"南昌达芬奇口腔医院有限公司",ac:0},{cy:"九江",lv:"其他",nm:"九江浔阳中山口腔门诊部有限公司",ac:1},{cy:"上饶",lv:"其他",nm:"上饶市美富口腔门诊有限公司",ac:0},{cy:"南昌",lv:"三线",nm:"德韩口腔",ac:0}],"陕晋蒙区":[{cy:"赤峰",lv:"其他",nm:"内蒙古锦美口腔医疗有限公司",ac:1},{cy:"呼和浩特",lv:"三线",nm:"呼和浩特市欧贝一口腔门诊部有限公司",ac:0},{cy:"呼和浩特",lv:"三线",nm:"呼和浩特市至美口腔医疗有限责任公司",ac:0},{cy:"包头",lv:"三线",nm:"京卓口腔医疗(包头市)有限责任公司",ac:0},{cy:"鄂尔多斯",lv:"其他",nm:"鄂尔多斯东胜区京卓口腔门诊部有限责任公司",ac:0},{cy:"呼和浩特",lv:"三线",nm:"呼和浩特华医口腔医院有限公司",ac:0},{cy:"通辽",lv:"其他",nm:"牙博士口腔",ac:1},{cy:"运城",lv:"其他",nm:"临猗国强口腔专科医院",ac:0},{cy:"长治",lv:"其他",nm:"山西瑞波特口腔医疗有限公司",ac:1},{cy:"长治",lv:"其他",nm:"长治市贾掌口腔有限公司",ac:0},{cy:"太原",lv:"三线",nm:"太原恒伦口腔医院有限公司",ac:0},{cy:"运城",lv:"其他",nm:"运城市盐湖区唯美口腔门诊部有限公司",ac:0},{cy:"太原",lv:"三线",nm:"太原众博仕口腔门诊部有限公司",ac:0},{cy:"长治",lv:"其他",nm:"长治市贝森口腔医院有限公司",ac:0},{cy:"长治",lv:"其他",nm:"长治市志强口腔医疗有限公司",ac:1},{cy:"晋中",lv:"其他",nm:"晋中榆次润芽口腔门诊部(有限公司)",ac:0},{cy:"运城",lv:"其他",nm:"运城市盐湖区优格口腔门诊部有限公司",ac:0},{cy:"太原",lv:"三线",nm:"太原澳莱口腔门诊有限公司学府园区体育路口腔门诊部",ac:0},{cy:"运城",lv:"其他",nm:"运城市盐湖区运中口腔门诊部有限公司",ac:1},{cy:"晋中",lv:"其他",nm:"晋中市榆次区莱特口腔诊所有限公司",ac:1},{cy:"长治",lv:"其他",nm:"长治长兴口腔医院股份有限公司",ac:1},{cy:"太原",lv:"三线",nm:"太原可睦口腔门诊有限公司",ac:0},{cy:"运城",lv:"其他",nm:"运城市盐湖区嘉悦口腔门诊部有限公司",ac:0},{cy:"太原",lv:"三线",nm:"太原达美联合口腔门诊部有限公司",ac:0},{cy:"咸阳",lv:"其他",nm:"西安海涛",ac:1},{cy:"西安",lv:"二线",nm:"小白兔口腔医疗科技集团西安雁塔兔博士口腔医院有限公司",ac:0},{cy:"西安",lv:"二线",nm:"西安碑林雅禾口腔门诊部有限公司",ac:0},{cy:"延安",lv:"其他",nm:"延安市宝塔区致美口腔医院有限公司",ac:0},{cy:"西安",lv:"二线",nm:"西安诺贝尔",ac:0},{cy:"西安",lv:"二线",nm:"西安海涛",ac:0},{cy:"西安",lv:"其他",nm:"陕西皓亚口腔医疗有限公司张掖路口腔诊所",ac:0},{cy:"西安",lv:"二线",nm:"小白兔口腔医疗科技集团西安未央兔博士口腔门诊部有限公司",ac:0},{cy:"西安",lv:"二线",nm:"西安莲湖圣贝口腔门诊部",ac:0},{cy:"宝鸡",lv:"其他",nm:"宝鸡高新口腔医院有限公司",ac:1},{cy:"延安",lv:"其他",nm:"杭州西湖口腔医院有限公司延安路口腔门诊部",ac:0},{cy:"延安",lv:"其他",nm:"延安名一牙卫士口腔门诊部有限公司",ac:0},{cy:"榆林",lv:"其他",nm:"榆林德系口腔门诊部有限公司",ac:1},{cy:"西安",lv:"二线",nm:"西安海涛",ac:0},{cy:"西安",lv:"二线",nm:"西安海涛",ac:0}]};
+function closeDlg(){document.getElementById('mask').classList.remove('show')}
+document.getElementById('mask').addEventListener('click',e=>{if(e.target===document.getElementById('mask'))closeDlg()});
+
+function fmt(n){if(n==null||isNaN(n))return'-';n=Math.round(n);if(n>=10000)return(n/10000).toFixed(2)+'万';return n.toLocaleString('zh-CN')}
+
+renderKPI();
+renderTable();
+</script>
+</body>
+</html>
