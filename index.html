@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>浙江区×服务商（杭州品效）报告</title>
+<style>
+/* 城市之星合伙人晋级报告 · 公共样式 */
+/* 排版固定，修改此文件即可全局生效，不需要改 Python */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; background:#f0f2f5; color:#333; }
+.layout { display:flex; min-height:100vh; }
+.sidebar { width:240px; background:#fff; border-right:1px solid #e0e0e0; position:fixed; top:0; left:0; bottom:0; overflow-y:auto; z-index:100; box-shadow:2px 0 8px rgba(0,0,0,0.06); }
+.main { margin-left:240px; flex:1; padding:20px; max-width:1000px; }
+.layout.no-sidebar .main { margin-left:0; max-width:1180px; width:100%; margin-right:auto; }
+.compact-summary-grid { margin-bottom:14px; }
+.sidebar-header { padding:16px; background:linear-gradient(135deg,#1a237e,#3949ab); color:#fff; }
+.sidebar-header h3 { font-size:15px; margin-bottom:8px; }
+.sidebar-filters { padding:8px 12px; border-bottom:1px solid #e8e8e8; }
+.filter-btn { padding:4px 10px; border:1px solid #e0e0e0; border-radius:14px; font-size:12px; cursor:pointer; background:#fff; margin:2px; transition:all .2s; }
+.filter-btn:hover,.filter-btn.active { background:#1a237e; color:#fff; border-color:#1a237e; }
+.sidebar-list { padding:4px 0; }
+.sidebar-item { padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:6px; font-size:13px; border-bottom:1px solid #f5f5f5; transition:background .15s; }
+.sidebar-item:hover { background:#e8eaf6; }
+.sidebar-item.active { background:#c5cae9; font-weight:600; }
+.status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.dot-green { background:#4CAF50; } .dot-orange { background:#FF9800; } .dot-gray { background:#BDBDBD; } .dot-red { background:#C62828; } .dot-purple { background:#7B1FA2; }
+.si-name { flex:1; } .si-role { font-size:11px; padding:1px 5px; border-radius:8px; }
+.si-sales { background:#E3F2FD; color:#1565C0; } .si-ops { background:#FFF3E0; color:#E65100; } .si-nodata { background:#FFEBEE; color:#C62828; }
+.si-level { font-size:11px; color:#999; }
+.header { background:linear-gradient(135deg,#1a237e,#283593,#3949ab); color:#fff; padding:28px; border-radius:12px; margin-bottom:20px; text-align:center; }
+.header h1 { font-size:26px; margin-bottom:0; } .header p { font-size:13px; opacity:.85; margin-top:6px; }
+.summary-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+.summary-card { background:#fff; padding:18px; border-radius:10px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+.summary-card .num { font-size:30px; font-weight:800; } .summary-card .label { font-size:12px; color:#888; margin-top:2px; }
+.management-grid .summary-card { border:1px solid #E3F2FD; }
+.section { background:#fff; border-radius:10px; padding:20px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+.section h2 { font-size:17px; font-weight:700; color:#1a237e; border-bottom:2px solid #e8eaf6; padding-bottom:8px; margin-bottom:12px; }
+.insight-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0 16px; }
+.insight-card { background:#fff; border:1px solid #E3F2FD; border-radius:10px; padding:14px 16px; }
+.insight-card h3 { font-size:15px; margin-bottom:8px; }
+.insight-card ul { padding-left:18px; color:#555; line-height:1.8; font-size:13px; }
+.compare-table { width:100%; border-collapse:collapse; font-size:13px; }
+.compare-table th { padding:8px 10px; background:#f5f7fb; border-bottom:2px solid #dfe6f1; text-align:center; color:#5b6472; }
+.compare-table td { padding:8px 10px; border-bottom:1px solid #eef2f7; }
+.agency-module { border:1px solid #E6ECF5; border-radius:12px; padding:16px; margin-top:14px; background:linear-gradient(180deg,#FFFFFF,#FAFBFF); }
+.agency-module-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; }
+.agency-module-head h3 { font-size:16px; color:#1a237e; margin-bottom:4px; }
+.agency-module-sub { font-size:12px; color:#6b7280; line-height:1.7; }
+.agency-metric-group { display:flex; gap:8px; flex-wrap:wrap; }
+.agency-metric-pill { display:inline-flex; align-items:center; padding:4px 10px; border-radius:999px; background:#EEF3FF; color:#1a237e; font-size:12px; font-weight:700; }
+.agency-metric-pill-danger { background:#FFEBEE; color:#C62828; }
+.agency-insight-grid { display:grid; grid-template-columns:1.05fr 1fr; gap:14px; }
+.agency-panel { border:1px solid #EEF2F7; border-radius:10px; padding:12px; background:#fff; }
+.agency-panel-title { font-size:13px; font-weight:700; color:#344054; margin-bottom:10px; }
+.agency-race-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:12px; }
+.agency-race-name { min-width:96px; padding-top:4px; }
+.agency-race-bars { flex:1; display:flex; flex-direction:column; gap:3px; }
+.agency-race-bar-line { display:flex; align-items:center; gap:8px; }
+.agency-race-bar-track { flex:1; height:10px; background:#E5E7EB; border-radius:999px; overflow:hidden; }
+.agency-race-bar-fill { height:100%; border-radius:999px; }
+.agency-race-bar-fill.client-fill { background:linear-gradient(90deg,#42A5F5,#1E88E5); }
+.agency-race-bar-fill.spend-fill { background:linear-gradient(90deg,#FF8A65,#F4511E); }
+.agency-race-label { min-width:140px; font-size:12px; color:#667085; white-space:nowrap; }
+.agency-detail-table { width:100%; border-collapse:collapse; font-size:12px; }
+.agency-detail-table th { padding:8px 10px; text-align:left; background:#F8FAFC; border-bottom:1px solid #E5E7EB; color:#667085; font-size:12px; }
+.agency-detail-table td { padding:8px 10px; border-bottom:1px solid #F1F5F9; }
+.impact-person { padding:8px 10px; border-radius:8px; background:#F8FAFC; border:1px solid #E5E7EB; margin-bottom:6px; }
+.impact-danger { background:#FFF1F2; border-color:#FECACA; }
+.impact-sub { font-size:11px; color:#667085; margin-top:4px; line-height:1.6; }
+.impact-empty { font-size:12px; color:#98A2B3; line-height:1.7; }
+.related-person { display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px; color:#344054; flex-wrap:wrap; }
+.mini-badge { display:inline-flex; align-items:center; padding:1px 6px; border-radius:999px; background:#EEF2FF; color:#4338CA; font-size:10px; font-weight:700; }
+.mini-badge-danger { background:#FEE2E2; color:#B91C1C; }
+.issue-legend-row { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 16px; }
+.issue-legend-pill { display:inline-flex; align-items:center; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700; }
+.issue-line { padding:10px 0; border-bottom:1px dashed #E5E7EB; }
+.issue-line:last-child { border-bottom:none; }
+.issue-line-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px; }
+.issue-line-count { font-size:12px; font-weight:700; color:#667085; }
+.issue-line-names { font-size:13px; color:#475467; line-height:1.8; }
+.benchmark-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.benchmark-card { background:linear-gradient(180deg,#FFFFFF,#F8FAFC); border:1px solid #E5E7EB; border-radius:12px; padding:14px; }
+.benchmark-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:10px; }
+.benchmark-title { font-size:16px; font-weight:800; color:#344054; line-height:1.45; flex:1; }
+.benchmark-main { font-size:22px; font-weight:800; color:#1D4ED8; margin-bottom:6px; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.benchmark-main-label { font-size:12px; font-weight:700; color:#667085; }
+.benchmark-sub { font-size:12px; color:#475467; line-height:1.7; }
+.benchmark-foot { margin-top:8px; font-size:11px; color:#667085; line-height:1.7; }
+.benchmark-label { display:inline-block; margin-right:6px; color:#1a237e; font-size:12px; font-weight:800; }
+.benchmark-label-action { color:#B54708; }
+.crm-summary-grid .summary-card { border:1px solid #FAD1D1; }
+.appendix-details { border:1px solid #E3EAF7; border-radius:10px; overflow:hidden; background:#FAFBFF; }
+.appendix-summary { cursor:pointer; list-style:none; padding:14px 16px; font-size:14px; font-weight:700; color:#1a237e; background:#EEF3FF; }
+.appendix-summary::-webkit-details-marker { display:none; }
+.appendix-body { padding:4px 16px 12px; }
+.agency-tabs { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.agency-tab { padding:6px 14px; border:1px solid #c5cae9; border-radius:16px; font-size:13px; cursor:pointer; background:#fff; transition:all .2s; }
+.agency-tab:hover,.agency-tab.active { background:#1a237e; color:#fff; border-color:#1a237e; }
+.person-card { border-left:4px solid #e0e0e0; border-radius:8px; padding:16px; margin:12px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); transition:all .2s; }
+.card-green { border-left-color:#4CAF50; background:#F1F8E9; } .card-orange { border-left-color:#FF9800; background:#FFF8E1; }
+.card-gray { border-left-color:#e0e0e0; background:#FAFAFA; } .card-red { border-left-color:#C62828; background:#FFEBEE; }
+.card-purple { border-left-color:#7B1FA2; background:#F3E5F5; }
+.card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px; }
+.card-left { display:flex; align-items:center; gap:8px; } .card-right { display:flex; align-items:center; gap:6px; }
+.person-name { font-size:18px; font-weight:700; }
+.role-tag { font-size:12px; padding:2px 6px; border-radius:8px; } .role-sales { background:#E3F2FD; color:#1565C0; } .role-ops { background:#FFF3E0; color:#E65100; }
+.agency-label { font-size:12px; color:#999; } .arrow { color:#999; }
+.level-badge { color:#fff; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; }
+.promo-badge { padding:3px 10px; border-radius:10px; font-size:12px; font-weight:700; }
+.promo-yes { background:#E8F5E9; color:#2E7D32; } .promo-no { background:#FFF3E0; color:#E65100; }
+.promo-partial { background:#E3F2FD; color:#1565C0; }
+.promo-nodata { background:#FFEBEE; color:#C62828; } .promo-unreported { background:#F3E5F5; color:#7B1FA2; }
+.partner-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; margin-left:4px; }
+.partner-yes { background:#E8F5E9; color:#2E7D32; } .partner-no { background:#F3E5F5; color:#7B1FA2; }
+.card-path { font-size:12px; color:#666; margin-bottom:8px; }
+.indicator-table { width:100%; border-collapse:collapse; margin:6px 0; }
+.indicator-table th { padding:5px 8px; text-align:left; font-size:11px; color:#888; background:#f8f8f8; border-bottom:1px solid #e8e8e8; }
+.indicator-table td { padding:5px 8px; font-size:13px; border-bottom:1px solid #f0f0f0; }
+.num { text-align:right; } .bold { font-weight:700; } .ind-header th { text-align:center; } .ind-header th:first-child { text-align:left; }
+.st-met { background:#E8F5E9; color:#2E7D32; padding:2px 7px; border-radius:8px; font-size:12px; font-weight:600; }
+.st-miss { background:#FFF3E0; color:#E65100; padding:2px 7px; border-radius:8px; font-size:12px; font-weight:600; }
+.st-hot { background:#FFF3E0; color:#E65100; padding:2px 7px; border-radius:8px; font-size:12px; font-weight:600; }
+.pct-bar { background:#e8e8e8; border-radius:8px; height:16px; width:100%; position:relative; overflow:hidden; }
+.pct-fill { height:100%; border-radius:8px; transition:width .4s; }
+.pct-text { position:absolute; top:0; left:50%; transform:translateX(-50%); font-size:10px; line-height:16px; color:#333; font-weight:600; }
+.section-label { font-size:13px; font-weight:600; color:#555; margin-top:10px; margin-bottom:4px; }
+.efforts-box { margin-bottom:2px; } .effort-item { padding:2px 0; font-size:13px; }
+.impl-box { padding:6px 10px; background:rgba(33,150,243,.05); border-radius:6px; margin-bottom:2px; }
+.impl-item { padding:2px 0; font-size:13px; color:#1565C0; }
+.race-box { margin-bottom:4px; } .race-tag { display:inline-block; padding:2px 7px; border-radius:10px; font-size:11px; font-weight:600; margin:2px; }
+.race-cnt { font-size:10px; color:#aaa; }
+.client-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:4px; }
+.client-table th { padding:4px 6px; text-align:left; background:#f5f5f5; border-bottom:1px solid #e0e0e0; font-size:11px; color:#666; }
+.client-table td { padding:4px 6px; border-bottom:1px solid #f5f5f5; }
+.own-badge { padding:1px 6px; border-radius:8px; font-size:11px; font-weight:600; } .own-yes { background:#E8F5E9; color:#2E7D32; } .own-no { background:#F5F5F5; color:#999; }
+.multi-table { width:100%; border-collapse:collapse; font-size:13px; }
+.multi-table thead th { padding:8px 10px; text-align:left; background:#f5f5f5; border-bottom:2px solid #e0e0e0; font-size:12px; color:#666; font-weight:600; }
+.multi-table tbody td { border-bottom:1px solid #f0f0f0; }
+.race-bar-row { display:flex; align-items:center; margin:3px 0; }
+.race-bar-track { flex:1; margin:0 8px; background:#e8e8e8; border-radius:4px; height:14px; overflow:hidden; }
+.race-bar-fill { height:100%; background:#42A5F5; border-radius:4px; } .race-bar-num { font-size:12px; color:#666; min-width:24px; text-align:right; }
+.lv-cnt { font-size:14px; margin:0 12px 0 4px; }
+.classify-group { padding:6px 0; }
+.classify-label { display:inline-block; padding:3px 10px; border-radius:8px; font-size:13px; font-weight:600; }
+.classify-names { font-size:13px; color:#555; margin-left:6px; }
+.hidden { display:none !important; }
+.search-hidden { display:none !important; }
+@media (max-width:900px) { .sidebar { width:200px; } .main { margin-left:200px; } .summary-grid, .insight-grid, .benchmark-grid { grid-template-columns:repeat(2,1fr); } .agency-insight-grid { grid-template-columns:1fr; } .compare-table { font-size:12px; } }
+
+</style>
+</head>
+<body>
+<div class="layout with-sidebar">
+    
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>🏙️ 合伙人导航</h3>
+                <div style="font-size:12px;opacity:.8;">共 5 人</div>
+            </div>
+            <div class="sidebar-filters">
+                <input type="text" id="searchInput" placeholder="🔍 搜索人名..." oninput="searchPerson(this.value)" style="width:100%;padding:6px 10px;border:1px solid #ccc;border-radius:6px;font-size:13px;margin-bottom:6px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='#1a237e'" onblur="this.style.borderColor='#ccc'">
+                <button class="filter-btn active" onclick="filterRole('all')">全部</button>
+                <button class="filter-btn" onclick="filterRole('销售')">🏷️ 销售</button>
+                <button class="filter-btn" onclick="filterRole('运营')">⚙️ 运营</button>
+                <div style="margin-top:4px;">
+                    <button class="filter-btn" onclick="filterStatus('promote')">🎯 可晋级</button>
+                    <button class="filter-btn" onclick="filterStatus('partial')">⚡ 业绩达标</button>
+                    <button class="filter-btn" onclick="filterStatus('miss')">⏳ 业绩未达</button>
+                    <button class="filter-btn" onclick="filterStatus('unreported')" style="border-color:#CE93D8;">📋 未提报</button>
+                    <button class="filter-btn" onclick="filterStatus('nodata')" style="border-color:#EF9A9A;">📭 无业绩</button>
+                </div>
+            </div>
+            <div class="sidebar-list" id="sidebarList">
+                <div class="sidebar-item" data-role="运营" data-agency="杭州品效" data-partner="已提报" onclick="scrollToCard('张顺生')">
+            <span class="status-dot dot-red"></span>
+            <span class="si-name">📭张顺生</span>
+            <span class="si-role si-ops">运营</span>
+            <span class="si-level">L0</span>
+        </div><div class="sidebar-item" data-role="运营" data-agency="杭州品效" data-partner="已提报" onclick="scrollToCard('刘鑫玉')">
+            <span class="status-dot dot-orange"></span>
+            <span class="si-name">刘鑫玉</span>
+            <span class="si-role si-ops">运营</span>
+            <span class="si-level">L1</span>
+        </div><div class="sidebar-item" data-role="销售" data-agency="杭州品效" data-partner="已提报" onclick="scrollToCard('叶思思')">
+            <span class="status-dot dot-gray"></span>
+            <span class="si-name">叶思思</span>
+            <span class="si-role si-sales">销售</span>
+            <span class="si-level">L1</span>
+        </div><div class="sidebar-item" data-role="销售" data-agency="杭州品效" data-partner="已提报" onclick="scrollToCard('张志刚')">
+            <span class="status-dot dot-gray"></span>
+            <span class="si-name">张志刚</span>
+            <span class="si-role si-sales">销售</span>
+            <span class="si-level">L1</span>
+        </div><div class="sidebar-item" data-role="销售" data-agency="杭州品效" data-partner="已提报" onclick="scrollToCard('蔡泽发')">
+            <span class="status-dot dot-orange"></span>
+            <span class="si-name">蔡泽发</span>
+            <span class="si-role si-sales">销售</span>
+            <span class="si-level">L1</span>
+        </div>
+            </div>
+        </div>
+    <div class="main">
+        <div class="header" style="">
+            
+            <h1>🏙️ 浙江区×服务商（杭州品效）报告</h1>
+            <div style="font-size:13px;color:rgba(255,255,255,0.75);margin-top:4px;">数据截止：2026/3/22</div>
+            
+            
+        </div>
+        
+<!-- 顶部粘性导航条 —— 钢灰蓝底白字，与深蓝header区分，允许换行 -->
+<style>
+.sticky-nav{position:sticky;top:0;z-index:999;background:linear-gradient(135deg,#37474F 0%,#546E7A 100%);padding:10px 24px;box-shadow:0 2px 12px rgba(55,71,79,.3);font-family:inherit;border-radius:0 0 10px 10px;margin-top:-8px;}
+.sticky-nav-inner{display:flex;flex-wrap:wrap;align-items:center;gap:7px 5px;}
+.sticky-nav-label{font-size:12px;color:rgba(255,255,255,.65);margin-right:8px;flex-shrink:0;font-weight:500;letter-spacing:.5px;}
+.sticky-nav-item{display:inline-flex;align-items:center;padding:5px 14px;font-size:13px;color:rgba(255,255,255,.88);text-decoration:none;cursor:pointer;transition:all .2s;border-radius:16px;background:rgba(255,255,255,.12);flex-shrink:0;}
+.sticky-nav-item:hover{color:#fff;background:rgba(255,255,255,.24);}
+.sticky-nav-item.active{color:#fff;background:rgba(255,255,255,.32);font-weight:600;box-shadow:0 0 0 1.5px rgba(255,255,255,.45);}
+.sticky-nav-item .nav-dot{width:6px;height:6px;border-radius:50%;margin-right:6px;flex-shrink:0;}
+.sticky-nav-top{display:inline-flex;align-items:center;padding:5px 12px;font-size:12px;color:rgba(255,255,255,.55);cursor:pointer;margin-left:auto;flex-shrink:0;transition:color .2s;border-radius:16px;}
+.sticky-nav-top:hover{color:#fff;background:rgba(255,255,255,.18);}
+</style>
+<div class="sticky-nav" id="stickyNav">
+    <div class="sticky-nav-inner" id="stickyNavInner">
+        <span class="sticky-nav-label">📑 快速导航</span>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+    var nav=document.getElementById("stickyNav"),inner=document.getElementById("stickyNavInner");
+    if(!nav||!inner)return;
+    var h2s=document.querySelectorAll(".section h2");
+    if(h2s.length<2){nav.style.display="none";return;}
+    var colors=["#90CAF9","#81D4FA","#A5D6A7","#FFCC80","#CE93D8","#80DEEA","#FFF176"];
+    h2s.forEach(function(h,i){
+        if(!h.id) h.id="toc-sec-"+i;
+        var txt=h.textContent.replace(/^\s+/,"").substring(0,12);
+        var a=document.createElement("a");
+        a.className="sticky-nav-item";
+        a.setAttribute("data-target",h.id);
+        a.innerHTML="<span class=\"nav-dot\" style=\"background:"+colors[i%colors.length]+";\"></span>"+txt;
+        a.onclick=(function(tid){return function(){
+            var el=document.getElementById(tid);
+            if(el){var y=el.getBoundingClientRect().top+window.scrollY-48;window.scrollTo({top:y,behavior:"smooth"});}
+        };})(h.id);
+        inner.appendChild(a);
+    });
+    var topBtn=document.createElement("a");
+    topBtn.className="sticky-nav-top";
+    topBtn.textContent="↑ 顶部";
+    topBtn.onclick=function(){window.scrollTo({top:0,behavior:"smooth"});};
+    inner.appendChild(topBtn);
+    var items=inner.querySelectorAll(".sticky-nav-item");
+    var ticking=false;
+    window.addEventListener("scroll",function(){
+        if(!ticking){ticking=true;requestAnimationFrame(function(){
+            var st=window.scrollY+50,cur=-1;
+            h2s.forEach(function(h,i){if(h.offsetTop<=st)cur=i;});
+            items.forEach(function(it,i){it.classList.toggle("active",i===cur);});
+            if(cur>=0&&items[cur]){items[cur].scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});}
+            ticking=false;
+        });}
+    });
+});
+</script>
+
+        
+        <div class="summary-grid">
+            <div class="summary-card"><div class="num" style="color:#1a237e;">5</div><div class="label">总人数（含无业绩）</div></div>
+            <div class="summary-card"><div class="num" style="color:#4CAF50;">0</div><div class="label">可晋级人数</div></div>
+            <div class="summary-card"><div class="num" style="color:#7B1FA2;">0</div><div class="label">未提报合伙人</div></div>
+            <div class="summary-card"><div class="num" style="color:#C62828;">1</div><div class="label">无业绩数据</div></div>
+        </div>
+        <div class="section">
+            <h2>📌 合伙人等级分布与晋级总览</h2>
+            
+                    <div style="background:#FAFBFF;border:1px solid #E6ECF5;border-radius:12px;padding:20px;margin-bottom:16px;">
+                        <div style="font-weight:700;font-size:14px;color:#1a237e;margin-bottom:14px;">📊 等级分布（已提报 5人）</div>
+                        <div style="display:flex;align-items:center;gap:24px;">
+                            <div style="position:relative;width:120px;height:120px;flex-shrink:0;">
+                                <svg viewBox="0 0 120 120" style="width:120px;height:120px;transform:rotate(-90deg);">
+                                <circle cx="60" cy="60" r="48" fill="none" stroke="#78909C" stroke-width="18" stroke-dasharray="60.3 241.3" stroke-dashoffset="0.0"/>
+                                <circle cx="60" cy="60" r="48" fill="none" stroke="#42A5F5" stroke-width="18" stroke-dasharray="241.3 60.3" stroke-dashoffset="-60.3"/>
+                                </svg>
+                                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+                                    <div style="font-size:20px;font-weight:800;color:#1a237e;">5</div>
+                                    <div style="font-size:10px;color:#888;">已提报</div>
+                                </div>
+                            </div>
+                            <div>
+                                
+                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                                <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#78909C;flex-shrink:0;"></span>
+                                <span style="font-size:13px;color:#555;min-width:22px;">L0</span>
+                                <span style="font-size:15px;font-weight:800;color:#333;min-width:36px;text-align:right;">1人</span>
+                                <span style="font-size:12px;color:#78909C;min-width:42px;text-align:right;">20.0%</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                                <span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#42A5F5;flex-shrink:0;"></span>
+                                <span style="font-size:13px;color:#555;min-width:22px;">L1</span>
+                                <span style="font-size:15px;font-weight:800;color:#333;min-width:36px;text-align:right;">4人</span>
+                                <span style="font-size:12px;color:#42A5F5;min-width:42px;text-align:right;">80.0%</span>
+                            </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+            
+        <div style="margin:12px 0;">
+            <div style="font-weight:600;margin-bottom:6px;">📋 分岗位×职级晋级总览</div>
+            <table class="indicator-table" style="max-width:600px;">
+                <tr class="ind-header">
+                    <th>岗位</th><th>当前等级</th><th>人数</th>
+                    <th style="color:#2E7D32;">可晋级</th>
+                    <th style="color:#E65100;">业绩达标<br>成果未达</th>
+                    <th style="color:#C62828;">业绩未达</th>
+                </tr>
+                <tr>
+                    <td><span class="si-role si-sales" style="padding:2px 8px;">销售</span></td>
+                    <td><span class="level-badge" style="background:#42A5F5;">L1</span></td>
+                    <td class="num">3</td>
+                    <td class="num" style="color:#2E7D32;font-weight:700;">0</td>
+                    <td class="num" style="color:#E65100;">1</td>
+                    <td class="num" style="color:#C62828;">2</td>
+                </tr><tr>
+                    <td><span class="si-role si-ops" style="padding:2px 8px;">运营</span></td>
+                    <td><span class="level-badge" style="background:#78909C;">L0</span></td>
+                    <td class="num">1</td>
+                    <td class="num" style="color:#2E7D32;font-weight:700;">0</td>
+                    <td class="num" style="color:#E65100;">0</td>
+                    <td class="num" style="color:#C62828;">1</td>
+                </tr><tr>
+                    <td><span class="si-role si-ops" style="padding:2px 8px;">运营</span></td>
+                    <td><span class="level-badge" style="background:#42A5F5;">L1</span></td>
+                    <td class="num">1</td>
+                    <td class="num" style="color:#2E7D32;font-weight:700;">0</td>
+                    <td class="num" style="color:#E65100;">1</td>
+                    <td class="num" style="color:#C62828;">0</td>
+                </tr>
+            </table>
+        </div>
+        </div>
+        
+        
+        
+        
+        <div class="section" style="border:3px solid #D32F2F;border-radius:10px;background:linear-gradient(135deg,#FFF5F5,#FFFFFF);">
+            <h2 style="color:#D32F2F;font-size:20px;">🚨 达标腰客未及时录入CRM · 总览 + 分服务商定位</h2>
+            <div style="background:linear-gradient(135deg,#D32F2F,#B71C1C);color:#fff;padding:14px 18px;border-radius:8px;margin-bottom:14px;font-weight:700;font-size:15px;line-height:1.7;">
+                ‼️ 发现 2 个达标腰客未及时录入CRM，涉及 1 位合伙人。
+            </div>
+            <div class="summary-grid crm-summary-grid">
+                <div class="summary-card"><div class="num" style="color:#1565C0;">2</div><div class="label">未及时录入CRM的达标腰客数</div></div>
+                <div class="summary-card"><div class="num" style="color:#D84315;">1</div><div class="label">涉及合伙人数</div></div>
+                <div class="summary-card"><div class="num" style="color:#B71C1C;">0</div><div class="label">补录后直接改变晋级结果人数</div></div>
+                <div class="summary-card"><div class="num" style="color:#6A1B9A;">1</div><div class="label">涉及服务商数</div></div>
+            </div>
+            <div style="overflow-x:auto;margin-bottom:16px;">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>服务商</th><th>未及时录入CRM客户</th><th>涉及合伙人</th><th>补录后直接改变晋级结果</th><th>重点提醒对象</th>
+                        </tr>
+                    </thead>
+                    <tbody><tr>
+                <td style="font-weight:700;">杭州品效</td>
+                <td class="num">2</td>
+                <td class="num" style="color:#D84315;">1</td>
+                <td class="num" style="color:#B71C1C;">0</td>
+                <td style="font-size:12px;line-height:1.7;">当前暂无补录后直接改变晋级结果人员</td>
+            </tr></tbody>
+                </table>
+            </div>
+            
+            <div class="agency-module crm-module">
+                <div class="agency-module-head">
+                    <div>
+                        <h3>杭州品效</h3>
+                        <div class="agency-module-sub">未及时录入CRM客户 2 个｜涉及合伙人 1 人｜补录后直接改变晋级结果 0 人</div>
+                    </div>
+                    <div class="agency-metric-group">
+                        <span class="agency-metric-pill">客户 2</span>
+                        <span class="agency-metric-pill">合伙人 1</span>
+                        <span class="agency-metric-pill agency-metric-pill-danger">直接影响 0</span>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="agency-detail-table">
+                        <thead>
+                            <tr>
+                                <th style="min-width:170px;">达标腰客名单</th>
+                                <th style="min-width:320px;">影响到的合伙人和晋级情况</th>
+                                <th style="min-width:240px;">其他涉及人员</th>
+                            </tr>
+                        </thead>
+                        <tbody><tr style="background:#FFFDF7;vertical-align:top;">
+                    <td style="padding:10px 8px;"><strong>川岚(北京)国际旅行社有限公司杭州营业部</strong><div style='font-size:11px;color:#667085;margin-top:4px;'>旅行社｜¥379,791</div><div style="margin-top:4px;"><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></div></td>
+                    <td style="padding:10px 8px;"><div class="impact-empty">当前在合伙人明细中未匹配到具体责任人，请先按客户口径核查责任归属。</div></td>
+                    <td style="padding:10px 8px;"><div class="impact-empty">当前无可展示的人维度协同信息。</div></td>
+                </tr><tr style="background:#FFFDF7;vertical-align:top;">
+                    <td style="padding:10px 8px;"><strong>浙江云涧教育科技有限公司</strong><div style='font-size:11px;color:#667085;margin-top:4px;'>会展活动｜¥130,799</div><div style="margin-top:4px;"><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></div></td>
+                    <td style="padding:10px 8px;"><div class="impact-empty">当前该客户补录后不会直接改变晋级结果，但仍需尽快补录。</div></td>
+                    <td style="padding:10px 8px;"><div class="related-person"><span class="mini-badge">🏷️销售</span><strong>蔡泽发</strong><span style="color:#1B5E20;font-size:10px;margin-left:4px;">归属</span></div></td>
+                </tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        
+    <div class="section">
+        <h2>🧭 服务商维度 · 赛道分布与业绩贡献</h2>
+        
+        <div class="agency-module">
+            <div class="agency-module-head">
+                <div>
+                    <h3>杭州品效</h3>
+                    <div class="agency-module-sub"><strong>服务客户数：</strong>144 ｜ <strong>消耗：</strong>585.3w</div>
+                </div>
+                <div class="agency-metric-group">
+                    <span class="agency-metric-pill">服务客户数 144</span>
+                    <span class="agency-metric-pill">消耗 585.3w</span>
+                </div>
+            </div>
+            <div class="agency-insight-grid">
+                <div class="agency-panel">
+                    <div class="agency-panel-title">赛道分布</div>
+                    <div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:13.9%;"></div></div><span class="agency-race-label">客户 20 · 13.9%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:30.7%;"></div></div><span class="agency-race-label">消耗 179.4w · 30.7%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:12.5%;"></div></div><span class="agency-race-label">客户 18 · 12.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:25.6%;"></div></div><span class="agency-race-label">消耗 149.5w · 25.6%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:6.9%;"></div></div><span class="agency-race-label">客户 10 · 6.9%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:12.5%;"></div></div><span class="agency-race-label">消耗 73.3w · 12.5%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:8.3%;"></div></div><span class="agency-race-label">客户 12 · 8.3%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:9.6%;"></div></div><span class="agency-race-label">消耗 56.2w · 9.6%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:15.3%;"></div></div><span class="agency-race-label">客户 22 · 15.3%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:7.6%;"></div></div><span class="agency-race-label">消耗 44.4w · 7.6%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#FFB74D18;color:#FFB74D;border:1px solid #FFB74D44;">本地-加盟</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:6.2%;"></div></div><span class="agency-race-label">客户 9 · 6.2%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:5.5%;"></div></div><span class="agency-race-label">消耗 32.3w · 5.5%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#66BB6A18;color:#66BB6A;border:1px solid #66BB6A44;">家居-会展</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:2.1%;"></div></div><span class="agency-race-label">客户 3 · 2.1%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:5.2%;"></div></div><span class="agency-race-label">消耗 30.6w · 5.2%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:4.9%;"></div></div><span class="agency-race-label">客户 7 · 4.9%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:1.4%;"></div></div><span class="agency-race-label">消耗 8.4w · 1.4%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#4CAF5018;color:#4CAF50;border:1px solid #4CAF5044;">家居-泛装修</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:3.5%;"></div></div><span class="agency-race-label">客户 5 · 3.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.8%;"></div></div><span class="agency-race-label">消耗 4.9w · 0.8%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:6.2%;"></div></div><span class="agency-race-label">客户 9 · 6.2%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.8%;"></div></div><span class="agency-race-label">消耗 4.5w · 0.8%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#78909C18;color:#78909C;border:1px solid #78909C44;">本地-政务</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:18.1%;"></div></div><span class="agency-race-label">客户 26 · 18.1%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.2%;"></div></div><span class="agency-race-label">消耗 1.3w · 0.2%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#FF980018;color:#FF9800;border:1px solid #FF980044;">本地-餐娱</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:1.4%;"></div></div><span class="agency-race-label">客户 2 · 1.4%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.0%;"></div></div><span class="agency-race-label">消耗 0.1w · 0.0%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#AB47BC18;color:#AB47BC;border:1px solid #AB47BC44;">本地-丽人</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:0.7%;"></div></div><span class="agency-race-label">客户 1 · 0.7%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.0%;"></div></div><span class="agency-race-label">消耗 0.0w · 0.0%</span></div>
+                </div>
+            </div>
+                </div>
+                <div class="agency-panel">
+                    <div class="agency-panel-title">合伙人业绩贡献</div>
+                    <table class="agency-detail-table">
+                        <thead>
+                            <tr><th>合伙人</th><th>核心赛道</th><th>服务客户数</th><th>月消耗</th><th>贡献占比</th></tr>
+                        </thead>
+                        <tbody><tr>
+                <td><strong>蔡泽发</strong><div style="font-size:11px;color:#888;">销售</div></td>
+                <td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td class="num">6</td>
+                <td class="num">38.8w</td>
+                <td class="num">44.4%</td>
+            </tr><tr>
+                <td><strong>张志刚</strong><div style="font-size:11px;color:#888;">销售</div></td>
+                <td><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></td>
+                <td class="num">8</td>
+                <td class="num">25.1w</td>
+                <td class="num">28.7%</td>
+            </tr><tr>
+                <td><strong>刘鑫玉</strong><div style="font-size:11px;color:#888;">运营</div></td>
+                <td><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></td>
+                <td class="num">17</td>
+                <td class="num">22.1w</td>
+                <td class="num">25.3%</td>
+            </tr><tr>
+                <td><strong>叶思思</strong><div style="font-size:11px;color:#888;">销售</div></td>
+                <td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td class="num">17</td>
+                <td class="num">1.5w</td>
+                <td class="num">1.7%</td>
+            </tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+        <div class="section">
+            <h2>📊 问题名单分布</h2>
+            <div class="issue-legend-row"><span class="issue-legend-pill" style="background:#E8F5E9;color:#2E7D32;">可晋级</span><span class="issue-legend-pill" style="background:#FFF3E0;color:#E65100;">业绩达标成果未达</span><span class="issue-legend-pill" style="background:#FFEBEE;color:#C62828;">业绩未达</span><span class="issue-legend-pill" style="background:#F3E5F5;color:#7B1FA2;">未提报</span><span class="issue-legend-pill" style="background:#FBE9E7;color:#D84315;">无业绩</span></div>
+            
+        <div class="agency-module">
+            <div class="agency-module-head">
+                <div>
+                    <h3>杭州品效</h3>
+                </div>
+                <div class="agency-metric-group">
+                    <span class="agency-metric-pill">可晋级 0</span>
+                    <span class="agency-metric-pill">成果未达 2</span>
+                    <span class="agency-metric-pill">业绩未达 2</span>
+                </div>
+            </div>
+            <div class="issue-line">
+                <div class="issue-line-head"><span class="issue-legend-pill" style="background:#E8F5E9;color:#2E7D32;">可晋级</span><span class="issue-line-count">0人</span></div>
+                <div class="issue-line-names">无</div>
+            </div><div class="issue-line">
+                <div class="issue-line-head"><span class="issue-legend-pill" style="background:#FFF3E0;color:#E65100;">业绩达标成果未达</span><span class="issue-line-count">2人</span></div>
+                <div class="issue-line-names">刘鑫玉、蔡泽发</div>
+            </div><div class="issue-line">
+                <div class="issue-line-head"><span class="issue-legend-pill" style="background:#FFEBEE;color:#C62828;">业绩未达</span><span class="issue-line-count">2人</span></div>
+                <div class="issue-line-names">叶思思、张志刚</div>
+            </div><div class="issue-line">
+                <div class="issue-line-head"><span class="issue-legend-pill" style="background:#F3E5F5;color:#7B1FA2;">未提报</span><span class="issue-line-count">0人</span></div>
+                <div class="issue-line-names">无</div>
+            </div><div class="issue-line">
+                <div class="issue-line-head"><span class="issue-legend-pill" style="background:#FBE9E7;color:#D84315;">无业绩</span><span class="issue-line-count">1人</span></div>
+                <div class="issue-line-names">张顺生</div>
+            </div>
+        </div>
+        </div>
+        
+        
+        <div class="section" id="personSection">
+            <h2>👤 合伙人逐人分析附录</h2>
+            <details class="appendix-details" open>
+                <summary class="appendix-summary">展开逐人分析附录 · 共 5 人</summary>
+                <div class="appendix-body">
+        
+        <div class="person-card card-orange" id="card-刘鑫玉" data-agency="杭州品效" data-role="运营" data-name="刘鑫玉" data-partner="已提报">
+            <div class="card-header">
+                <div class="card-left">
+                    <span class="person-name">刘鑫玉</span>
+                    <span class="partner-badge partner-yes">✅ 已提报合伙人</span>
+                    <span class="role-tag role-ops">⚙️ 运营</span>
+                    <span class="agency-label">杭州品效</span>
+                </div>
+                <div class="card-right">
+                    <span class="level-badge" style="background:#42A5F5;">L1</span> <span class="arrow">→</span> <span class="level-badge" style="background:#FFA726;">L2</span>
+                    <span class="promo-badge promo-partial">⚡ 业绩达标</span>
+                </div>
+            </div>
+            
+            <div class="card-path">
+                晋级路径：L1 → L2（运营岗：需 腰客≥3个 或 月日均消耗≥¥7,000）
+            </div>
+            <table class="indicator-table">
+                <tr class="ind-header"><th>指标</th><th>当前值</th><th>目标值</th><th>状态</th><th style="width:130px;">进度</th></tr>
+                <tr><td>🏆 城市之星腰客数</td><td class="num bold">3个</td><td class="num">3个</td><td><span class="st-met">✅ 已达标</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:100.0%;background:#4CAF50;"></div><span class="pct-text">100%</span></div></td></tr>
+                <tr><td>📊 月日均消耗</td><td class="num bold">¥10,537</td><td class="num">¥7,000</td><td><span class="st-met">✅ 已达标</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:100%;background:#4CAF50;"></div><span class="pct-text">100%</span></div></td></tr>
+            </table>
+            
+            <div style="background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border:1px solid #FFE082;border-radius:8px;padding:12px;margin:10px 0;">
+                <div style="font-size:14px;font-weight:700;color:#F57F17;margin-bottom:8px;">📋 L2成果指标（新孵化腰客 + 案例 ≥ 3）</div>
+                <table class="indicator-table" style="margin-bottom:8px;">
+                    <tr class="ind-header"><th>指标</th><th>当前值</th><th>目标值</th><th>状态</th><th style="width:130px;">进度</th></tr>
+                    <tr><td>🆕 26年新孵化腰客</td><td class="num bold">1个</td><td class="num">3个</td><td><span class="st-miss">⏳ 需补2个案例</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:33.33333333333333%;background:#f44336;"></div><span class="pct-text">33%</span></div></td></tr>
+                </table>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px;">
+                    <div>
+                        <div style="font-weight:600;color:#2E7D32;margin-bottom:4px;">✅ 新孵化腰客（1个）</div>
+                        <div style="padding:2px 0;font-size:12px;color:#2E7D32;">✅ 金华市莱蒽口腔 (月消耗¥43,397)</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;color:#999;margin-bottom:4px;">❌ 去年腰客（2个，不计入）</div>
+                        <div style="padding:2px 0;font-size:12px;color:#999;text-decoration:line-through;">❌ 衢州航雅健康管理有限公司柯城杭成口腔诊所 (去年腰客，不计入成果)</div><div style="padding:2px 0;font-size:12px;color:#999;text-decoration:line-through;">❌ 温州鹿城口腔 (去年腰客，不计入成果)</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;color:#E65100;margin-bottom:4px;">🔥 非去年腰客追赶候选</div>
+                        <div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 宁波协和学校 (YTD 18%，差¥82,348)</div></div><div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 浙江大学 (YTD 15%，差¥85,000)</div></div><div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 浙江顺锦金钻酒店管理有限公司 (YTD 12%，差¥87,504)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 温州俊奇经济发展有限公司 (YTD 10%，差¥89,588)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 温州市嘉雅餐饮管理有限公司 (YTD 10%，差¥90,000)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 宁波博纳托管服务有限公司 (YTD 10%，差¥90,388)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 杭州贝佳齿科有限公司 (YTD 8%，差¥92,129)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 乐清市汤一臣酒店管理有限公司 (YTD 2%，差¥98,061)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 德纳展览 (YTD 1%，差¥99,247)</div></div><div style="padding:4px 0;font-size:12px;color:#1976D2;cursor:pointer;font-weight:600;" onclick="var wrap=this.parentElement;var extras=wrap.querySelectorAll('[data-chase-extra=&quot;1&quot;]');var hidden=extras[0].style.display==='none';extras.forEach(function(el){el.style.display=hidden?'':'none'});this.textContent=hidden?'▲ 收起':'▼ 展开剩余6个追赶候选'">▼ 展开剩余6个追赶候选</div>
+                    </div>
+                </div>
+                <div style="margin-top:8px;padding:6px 10px;background:#FFF3E0;border-radius:6px;font-size:12px;color:#E65100;">
+                    💡 成果指标 = 新孵化腰客1个 + 案例?个 ≥ 3 → <strong>建议至少提报2个案例</strong>，或努力追赶非去年腰客客户达标
+                </div>
+            </div>
+            <div class="section-label">🎯 努力方向</div>
+            <div class="efforts-box"><div class="effort-item">✅ 两项业绩指标均已达标 ✅✅</div><div class="effort-item">⚠️ 【成果缺口】26年新孵化腰客仅1个（去年腰客2个不计入），成果指标需≥3，还需补2个案例</div></div>
+            <div class="section-label">🔧 实现方式</div>
+            <div class="impl-box"><div class="impl-item">💡 保持现有客户消耗稳定增长，防止已达标客户消耗回落</div><div class="impl-item">💡 📝 建议提报2个案例来补足成果指标（新孵化腰客1 + 案例2 = 3）</div><div class="impl-item">💡 🆕 非去年腰客客户【宁波协和学校】(YTD进度18%，差¥82,348)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【浙江大学】(YTD进度15%，差¥85,000)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【浙江顺锦金钻酒店管理有限公司】(YTD进度12%，差¥87,504)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【温州俊奇经济发展有限公司】(YTD进度10%，差¥89,588)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【温州市嘉雅餐饮管理有限公司】(YTD进度10%，差¥90,000)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【宁波博纳托管服务有限公司】(YTD进度10%，差¥90,388)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【杭州贝佳齿科有限公司】(YTD进度8%，差¥92,129)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【乐清市汤一臣酒店管理有限公司】(YTD进度2%，差¥98,061)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【德纳展览】(YTD进度1%，差¥99,247)可追赶为新孵化腰客</div></div>
+            <div class="section-label">🏁 服务客户赛道分布</div>
+            <div class="race-box"><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:23.5%;"></div></div><span class="agency-race-label">客户 4 · 23.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:40.4%;"></div></div><span class="agency-race-label">消耗 8.9w · 40.4%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:17.6%;"></div></div><span class="agency-race-label">客户 3 · 17.6%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:10.8%;"></div></div><span class="agency-race-label">消耗 2.4w · 10.8%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:11.8%;"></div></div><span class="agency-race-label">客户 2 · 11.8%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:1.5%;"></div></div><span class="agency-race-label">消耗 0.3w · 1.5%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:11.8%;"></div></div><span class="agency-race-label">客户 2 · 11.8%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:2.5%;"></div></div><span class="agency-race-label">消耗 0.6w · 2.5%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:11.8%;"></div></div><span class="agency-race-label">客户 2 · 11.8%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.6%;"></div></div><span class="agency-race-label">消耗 0.1w · 0.6%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:11.8%;"></div></div><span class="agency-race-label">客户 2 · 11.8%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:43.7%;"></div></div><span class="agency-race-label">消耗 9.7w · 43.7%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:5.9%;"></div></div><span class="agency-race-label">客户 1 · 5.9%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.2%;"></div></div><span class="agency-race-label">消耗 0.0w · 0.2%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#66BB6A18;color:#66BB6A;border:1px solid #66BB6A44;">家居-会展</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:5.9%;"></div></div><span class="agency-race-label">客户 1 · 5.9%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.3%;"></div></div><span class="agency-race-label">消耗 0.1w · 0.3%</span></div>
+                </div>
+            </div></div>
+            <div class="section-label">📋 客户明细（归属 16个 + 参与服务 1个）</div>
+            <table class="client-table">
+                <tr><th>客户集团</th><th>行业</th><th>赛道</th><th>归属</th><th>CRM是否录入</th><th>月消耗</th><th>日均</th><th>YTD消耗</th><th>门槛</th><th>达标</th></tr>
+                <tr>
+                <td>衢州航雅健康管理有限公司柯城杭成口腔诊所</td><td>诊所</td><td><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥53,294</td><td class="num">¥2,538</td>
+                <td class="num">¥162,473</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>金华市莱蒽口腔</td><td>诊所</td><td><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥43,397</td><td class="num">¥2,067</td>
+                <td class="num">¥151,375</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>温州鹿城口腔</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥31,443</td><td class="num">¥1,497</td>
+                <td class="num">¥240,349</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>杭州萧山牙科医院有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥27,456</td><td class="num">¥1,307</td>
+                <td class="num">¥85,160</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-hot">🔥 85%</span></td></tr><tr>
+                <td>舟山定海泰康拜博口腔门诊部有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥26,206</td><td class="num">¥1,248</td>
+                <td class="num">¥89,583</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-hot">🔥 90%</span></td></tr><tr>
+                <td>浙江大学</td><td>学校-高等教育</td><td><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥12,000</td><td class="num">¥571</td>
+                <td class="num">¥15,000</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 15%</span></td></tr><tr>
+                <td>浙江工业大学</td><td>学校-高等教育</td><td><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥7,736</td><td class="num">¥368</td>
+                <td class="num">¥38,435</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 38%</span></td></tr><tr>
+                <td>银泰商业管理集团有限公司东阳分公司</td><td>购物中心</td><td><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥4,999</td><td class="num">¥238</td>
+                <td class="num">¥15,993</td>
+                <td class="num">¥50,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 32%</span></td></tr><tr>
+                <td>杭州贝佳齿科有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥4,388</td><td class="num">¥209</td>
+                <td class="num">¥7,871</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 8%</span></td></tr><tr>
+                <td>宁波协和学校</td><td>学校-义务教育</td><td><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥4,205</td><td class="num">¥200</td>
+                <td class="num">¥17,652</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 18%</span></td></tr><tr>
+                <td>温州市嘉雅餐饮管理有限公司</td><td>结婚服务</td><td><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥2,086</td><td class="num">¥99</td>
+                <td class="num">¥10,000</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 10%</span></td></tr><tr>
+                <td>宁波博纳托管服务有限公司</td><td>护理服务</td><td><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥1,178</td><td class="num">¥56</td>
+                <td class="num">¥9,612</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 10%</span></td></tr><tr>
+                <td>浙江顺锦金钻酒店管理有限公司</td><td>酒店</td><td><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥1,100</td><td class="num">¥52</td>
+                <td class="num">¥12,496</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 12%</span></td></tr><tr>
+                <td>温州俊奇经济发展有限公司</td><td>家居会展</td><td><span class="race-tag" style="background:#66BB6A18;color:#66BB6A;border:1px solid #66BB6A44;">家居-会展</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥555</td><td class="num">¥26</td>
+                <td class="num">¥10,412</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 10%</span></td></tr><tr>
+                <td>德纳展览</td><td>会展活动</td><td><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥474</td><td class="num">¥23</td>
+                <td class="num">¥753</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 1%</span></td></tr><tr>
+                <td>乐清市汤一臣酒店管理有限公司</td><td>酒店</td><td><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥215</td><td class="num">¥10</td>
+                <td class="num">¥1,939</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 2%</span></td></tr><tr>
+                <td>浙江中旅湘湖商业管理有限公司</td><td>购物中心</td><td><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></td>
+                <td><span class="own-badge own-no">参与服务</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥549</td><td class="num">¥26</td>
+                <td class="num">¥16,999</td>
+                <td class="num">¥50,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 34%</span></td></tr>
+            </table>
+        </div>
+        <div class="person-card card-gray" id="card-叶思思" data-agency="杭州品效" data-role="销售" data-name="叶思思" data-partner="已提报">
+            <div class="card-header">
+                <div class="card-left">
+                    <span class="person-name">叶思思</span>
+                    <span class="partner-badge partner-yes">✅ 已提报合伙人</span>
+                    <span class="role-tag role-sales">🏷️ 销售</span>
+                    <span class="agency-label">杭州品效</span>
+                </div>
+                <div class="card-right">
+                    <span class="level-badge" style="background:#42A5F5;">L1</span> <span class="arrow">→</span> <span class="level-badge" style="background:#FFA726;">L2</span>
+                    <span class="promo-badge promo-no">⏳ 努力中</span>
+                </div>
+            </div>
+            
+            <div class="card-path">
+                晋级路径：L1 → L2（销售岗：需 腰客≥3个 或 月日均消耗≥¥15,000）
+            </div>
+            <table class="indicator-table">
+                <tr class="ind-header"><th>指标</th><th>当前值</th><th>目标值</th><th>状态</th><th style="width:130px;">进度</th></tr>
+                <tr><td>🏆 城市之星腰客数</td><td class="num bold">0个</td><td class="num">3个</td><td><span class="st-miss">⏳ 缺3个</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:0.0%;background:#f44336;"></div><span class="pct-text">0%</span></div></td></tr>
+                <tr><td>📊 月日均消耗</td><td class="num bold">¥722</td><td class="num">¥15,000</td><td><span class="st-miss">⏳ 缺¥14,278</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:4.8%;background:#f44336;"></div><span class="pct-text">5%</span></div></td></tr>
+            </table>
+            
+            <div style="background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border:1px solid #FFE082;border-radius:8px;padding:12px;margin:10px 0;">
+                <div style="font-size:14px;font-weight:700;color:#F57F17;margin-bottom:8px;">📋 L2成果指标（新孵化腰客 + 案例 ≥ 3）</div>
+                <table class="indicator-table" style="margin-bottom:8px;">
+                    <tr class="ind-header"><th>指标</th><th>当前值</th><th>目标值</th><th>状态</th><th style="width:130px;">进度</th></tr>
+                    <tr><td>🆕 26年新孵化腰客</td><td class="num bold">0个</td><td class="num">3个</td><td><span class="st-miss">⏳ 需补3个案例</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:0.0%;background:#f44336;"></div><span class="pct-text">0%</span></div></td></tr>
+                </table>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px;">
+                    <div>
+                        <div style="font-weight:600;color:#2E7D32;margin-bottom:4px;">✅ 新孵化腰客（0个）</div>
+                        <div style="font-size:12px;color:#999;">暂无新孵化腰客</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;color:#999;margin-bottom:4px;">❌ 去年腰客（2个，不计入）</div>
+                        <div style="padding:2px 0;font-size:12px;color:#999;text-decoration:line-through;">❌ 衢州航雅健康管理有限公司柯城杭成口腔诊所 (去年腰客，不计入成果)</div><div style="padding:2px 0;font-size:12px;color:#999;text-decoration:line-through;">❌ 温州鹿城口腔 (去年腰客，不计入成果)</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;color:#E65100;margin-bottom:4px;">🔥 非去年腰客追赶候选</div>
+                        <div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 浙江中旅湘湖商业管理有限公司 (YTD 34%，差¥33,001)</div></div><div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 浙江中旅湘湖商业管理有限公司 (YTD 34%，差¥33,001)</div></div><div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 签缘 (YTD 25%，差¥224,584)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 浙江顺锦金钻酒店管理有限公司 (YTD 12%，差¥87,504)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 温州顺锦餐饮服务有限公司 (YTD 12%，差¥87,672)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 温州俊奇经济发展有限公司 (YTD 10%，差¥89,588)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 温州市嘉雅餐饮管理有限公司 (YTD 10%，差¥90,000)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 上海全一泵业(集团)有限公司永嘉分公司 (YTD 4%，差¥48,060)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 温州城泰酒店管理有限公司希尔顿酒店 (YTD 3%，差¥97,000)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 乐清市汤一臣酒店管理有限公司 (YTD 2%，差¥98,061)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 浙江陆恒环境科技有限公司 (YTD 1%，差¥49,573)</div></div><div style="padding:4px 0;font-size:12px;color:#1976D2;cursor:pointer;font-weight:600;" onclick="var wrap=this.parentElement;var extras=wrap.querySelectorAll('[data-chase-extra=&quot;1&quot;]');var hidden=extras[0].style.display==='none';extras.forEach(function(el){el.style.display=hidden?'':'none'});this.textContent=hidden?'▲ 收起':'▼ 展开剩余8个追赶候选'">▼ 展开剩余8个追赶候选</div>
+                    </div>
+                </div>
+                <div style="margin-top:8px;padding:6px 10px;background:#FFF3E0;border-radius:6px;font-size:12px;color:#E65100;">
+                    💡 成果指标 = 新孵化腰客0个 + 案例?个 ≥ 3 → <strong>建议至少提报3个案例</strong>，或努力追赶非去年腰客客户达标
+                </div>
+            </div>
+            <div class="section-label">🎯 努力方向</div>
+            <div class="efforts-box"><div class="effort-item">⚠️ 【腰客缺口】需再增3个腰客（当前0/3）</div><div class="effort-item">⚠️ 【日均消耗不足】当前¥722/天，目标¥15,000/天，缺口¥14,278</div><div class="effort-item">⚠️ 【成果缺口】26年新孵化腰客仅0个（去年腰客2个不计入），成果指标需≥3，还需补3个案例</div></div>
+            <div class="section-label">🔧 实现方式</div>
+            <div class="impl-box"><div class="impl-item">💡 重点攻坚【苍南口腔医院有限公司】(进度76%，差¥23,778)，加大投放推动达标</div><div class="impl-item">💡 重点攻坚【舟山定海泰康拜博口腔门诊部有限公司】(进度90%，差¥10,417)，加大投放推动达标</div><div class="impl-item">💡 建议提升头部客户【温州鹿城口腔】(月消耗¥85,646)的投放力度</div><div class="impl-item">💡 日均需提升¥14,278，可通过扩量/提价/加投实现</div><div class="impl-item">💡 📝 建议提报3个案例来补足成果指标（新孵化腰客0 + 案例3 = 3）</div><div class="impl-item">💡 🆕 非去年腰客客户【浙江中旅湘湖商业管理有限公司】(YTD进度34%，差¥33,001)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【浙江中旅湘湖商业管理有限公司】(YTD进度34%，差¥33,001)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【签缘】(YTD进度25%，差¥224,584)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【浙江顺锦金钻酒店管理有限公司】(YTD进度12%，差¥87,504)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【温州顺锦餐饮服务有限公司】(YTD进度12%，差¥87,672)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【温州俊奇经济发展有限公司】(YTD进度10%，差¥89,588)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【温州市嘉雅餐饮管理有限公司】(YTD进度10%，差¥90,000)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【上海全一泵业(集团)有限公司永嘉分公司】(YTD进度4%，差¥48,060)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【温州城泰酒店管理有限公司希尔顿酒店】(YTD进度3%，差¥97,000)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【乐清市汤一臣酒店管理有限公司】(YTD进度2%，差¥98,061)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【浙江陆恒环境科技有限公司】(YTD进度1%，差¥49,573)可追赶为新孵化腰客</div></div>
+            <div class="section-label">🏁 服务客户赛道分布</div>
+            <div class="race-box"><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:23.5%;"></div></div><span class="agency-race-label">客户 4 · 23.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:58.0%;"></div></div><span class="agency-race-label">消耗 17.2w · 58.0%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:17.6%;"></div></div><span class="agency-race-label">客户 3 · 17.6%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.6%;"></div></div><span class="agency-race-label">消耗 0.2w · 0.6%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:17.6%;"></div></div><span class="agency-race-label">客户 3 · 17.6%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:3.1%;"></div></div><span class="agency-race-label">消耗 0.9w · 3.1%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:11.8%;"></div></div><span class="agency-race-label">客户 2 · 11.8%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:7.3%;"></div></div><span class="agency-race-label">消耗 2.2w · 7.3%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:11.8%;"></div></div><span class="agency-race-label">客户 2 · 11.8%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:7.1%;"></div></div><span class="agency-race-label">消耗 2.1w · 7.1%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:5.9%;"></div></div><span class="agency-race-label">客户 1 · 5.9%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.2%;"></div></div><span class="agency-race-label">消耗 0.1w · 0.2%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#66BB6A18;color:#66BB6A;border:1px solid #66BB6A44;">家居-会展</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:5.9%;"></div></div><span class="agency-race-label">客户 1 · 5.9%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.9%;"></div></div><span class="agency-race-label">消耗 0.3w · 0.9%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:5.9%;"></div></div><span class="agency-race-label">客户 1 · 5.9%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:22.7%;"></div></div><span class="agency-race-label">消耗 6.7w · 22.7%</span></div>
+                </div>
+            </div></div>
+            <div class="section-label">📋 客户明细（归属 18个 + 参与服务 3个）</div>
+            <table class="client-table">
+                <tr><th>客户集团</th><th>行业</th><th>赛道</th><th>归属</th><th>CRM是否录入</th><th>月消耗</th><th>日均</th><th>YTD消耗</th><th>门槛</th><th>达标</th></tr>
+                <tr>
+                <td>温州鹿城口腔</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥85,646</td><td class="num">¥4,078</td>
+                <td class="num">¥240,349</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>衢州航雅健康管理有限公司柯城杭成口腔诊所</td><td>诊所</td><td><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥67,496</td><td class="num">¥3,214</td>
+                <td class="num">¥162,473</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>舟山定海泰康拜博口腔门诊部有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥35,048</td><td class="num">¥1,669</td>
+                <td class="num">¥89,583</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-hot">🔥 90%</span></td></tr><tr>
+                <td>温州市牙博士口腔医院有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥29,758</td><td class="num">¥1,417</td>
+                <td class="num">¥47,285</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 47%</span></td></tr><tr>
+                <td>苍南口腔医院有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥21,999</td><td class="num">¥1,048</td>
+                <td class="num">¥76,222</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-hot">🔥 76%</span></td></tr><tr>
+                <td>浙江中旅湘湖商业管理有限公司</td><td>购物中心</td><td><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥16,996</td><td class="num">¥809</td>
+                <td class="num">¥16,999</td>
+                <td class="num">¥50,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 34%</span></td></tr><tr>
+                <td>签缘</td><td>婚介所</td><td><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥11,654</td><td class="num">¥555</td>
+                <td class="num">¥75,416</td>
+                <td class="num">¥300,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 25%</span></td></tr><tr>
+                <td>温州市嘉雅餐饮管理有限公司</td><td>结婚服务</td><td><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥9,999</td><td class="num">¥476</td>
+                <td class="num">¥10,000</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 10%</span></td></tr><tr>
+                <td>浙江顺锦金钻酒店管理有限公司</td><td>酒店</td><td><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥4,985</td><td class="num">¥237</td>
+                <td class="num">¥12,496</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 12%</span></td></tr><tr>
+                <td>银泰商业管理集团有限公司东阳分公司</td><td>购物中心</td><td><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥3,999</td><td class="num">¥190</td>
+                <td class="num">¥15,993</td>
+                <td class="num">¥50,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 32%</span></td></tr><tr>
+                <td>温州俊奇经济发展有限公司</td><td>家居会展</td><td><span class="race-tag" style="background:#66BB6A18;color:#66BB6A;border:1px solid #66BB6A44;">家居-会展</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥2,775</td><td class="num">¥132</td>
+                <td class="num">¥10,412</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 10%</span></td></tr><tr>
+                <td>温州顺锦餐饮服务有限公司</td><td>酒店</td><td><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥2,462</td><td class="num">¥117</td>
+                <td class="num">¥12,328</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 12%</span></td></tr><tr>
+                <td>乐清市汤一臣酒店管理有限公司</td><td>酒店</td><td><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥1,741</td><td class="num">¥83</td>
+                <td class="num">¥1,939</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 2%</span></td></tr><tr>
+                <td>温州城泰酒店管理有限公司希尔顿酒店</td><td>会展活动</td><td><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥1,500</td><td class="num">¥71</td>
+                <td class="num">¥3,000</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 3%</span></td></tr><tr>
+                <td>宁波至诚学校</td><td>学校-高等教育</td><td><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥711</td><td class="num">¥34</td>
+                <td class="num">¥714</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 1%</span></td></tr><tr>
+                <td>浙江陆恒环境科技有限公司</td><td>电子和机械设备</td><td><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥427</td><td class="num">¥20</td>
+                <td class="num">¥427</td>
+                <td class="num">¥50,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 1%</span></td></tr><tr>
+                <td>上海全一泵业(集团)有限公司永嘉分公司</td><td>消防器材</td><td><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥2</td><td class="num">¥0</td>
+                <td class="num">¥1,940</td>
+                <td class="num">¥50,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 4%</span></td></tr><tr>
+                <td>温州鹿城口腔</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-no">参与服务</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥500</td><td class="num">¥24</td>
+                <td class="num">¥240,349</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>温州市嘉雅餐饮管理有限公司</td><td>结婚服务</td><td><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></td>
+                <td><span class="own-badge own-no">参与服务</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥1,501</td><td class="num">¥71</td>
+                <td class="num">¥10,000</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 10%</span></td></tr><tr>
+                <td>乐清市汤一臣酒店管理有限公司</td><td>酒店</td><td><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                <td><span class="own-badge own-no">参与服务</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥177</td><td class="num">¥8</td>
+                <td class="num">¥1,939</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 2%</span></td></tr>
+            </table>
+        </div>
+        <div class="person-card card-gray" id="card-张志刚" data-agency="杭州品效" data-role="销售" data-name="张志刚" data-partner="已提报">
+            <div class="card-header">
+                <div class="card-left">
+                    <span class="person-name">张志刚</span>
+                    <span class="partner-badge partner-yes">✅ 已提报合伙人</span>
+                    <span class="role-tag role-sales">🏷️ 销售</span>
+                    <span class="agency-label">杭州品效</span>
+                </div>
+                <div class="card-right">
+                    <span class="level-badge" style="background:#42A5F5;">L1</span> <span class="arrow">→</span> <span class="level-badge" style="background:#FFA726;">L2</span>
+                    <span class="promo-badge promo-no">⏳ 努力中</span>
+                </div>
+            </div>
+            
+            <div class="card-path">
+                晋级路径：L1 → L2（销售岗：需 腰客≥3个 或 月日均消耗≥¥15,000）
+            </div>
+            <table class="indicator-table">
+                <tr class="ind-header"><th>指标</th><th>当前值</th><th>目标值</th><th>状态</th><th style="width:130px;">进度</th></tr>
+                <tr><td>🏆 城市之星腰客数</td><td class="num bold">2个</td><td class="num">3个</td><td><span class="st-miss">⏳ 缺1个</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:66.7%;background:#FF9800;"></div><span class="pct-text">67%</span></div></td></tr>
+                <tr><td>📊 月日均消耗</td><td class="num bold">¥11,952</td><td class="num">¥15,000</td><td><span class="st-miss">⏳ 缺¥3,048</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:79.7%;background:#FF9800;"></div><span class="pct-text">80%</span></div></td></tr>
+            </table>
+            
+            <div style="background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border:1px solid #FFE082;border-radius:8px;padding:12px;margin:10px 0;">
+                <div style="font-size:14px;font-weight:700;color:#F57F17;margin-bottom:8px;">📋 L2成果指标（新孵化腰客 + 案例 ≥ 3）</div>
+                <table class="indicator-table" style="margin-bottom:8px;">
+                    <tr class="ind-header"><th>指标</th><th>当前值</th><th>目标值</th><th>状态</th><th style="width:130px;">进度</th></tr>
+                    <tr><td>🆕 26年新孵化腰客</td><td class="num bold">1个</td><td class="num">3个</td><td><span class="st-miss">⏳ 需补2个案例</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:33.33333333333333%;background:#f44336;"></div><span class="pct-text">33%</span></div></td></tr>
+                </table>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px;">
+                    <div>
+                        <div style="font-weight:600;color:#2E7D32;margin-bottom:4px;">✅ 新孵化腰客（1个）</div>
+                        <div style="padding:2px 0;font-size:12px;color:#2E7D32;">✅ 金华市莱蒽口腔 (月消耗¥57,741)</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;color:#999;margin-bottom:4px;">❌ 去年腰客（1个，不计入）</div>
+                        <div style="padding:2px 0;font-size:12px;color:#999;text-decoration:line-through;">❌ 初尔 (去年腰客，不计入成果)</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;color:#E65100;margin-bottom:4px;">🔥 非去年腰客追赶候选</div>
+                        <div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 绍兴复大口腔 (YTD 39%，差¥61,139)</div></div><div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 浙江大学 (YTD 15%，差¥85,000)</div></div><div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 杭州市第四机械技工学校 (YTD 10%，差¥90,000)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 麻和友 (YTD 3%，差¥290,376)</div></div><div data-chase-extra="1" style="display:none;"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 绍兴富悦酒店管理有限公司 (YTD 2%，差¥97,506)</div></div><div style="padding:4px 0;font-size:12px;color:#1976D2;cursor:pointer;font-weight:600;" onclick="var wrap=this.parentElement;var extras=wrap.querySelectorAll('[data-chase-extra=&quot;1&quot;]');var hidden=extras[0].style.display==='none';extras.forEach(function(el){el.style.display=hidden?'':'none'});this.textContent=hidden?'▲ 收起':'▼ 展开剩余2个追赶候选'">▼ 展开剩余2个追赶候选</div>
+                    </div>
+                </div>
+                <div style="margin-top:8px;padding:6px 10px;background:#FFF3E0;border-radius:6px;font-size:12px;color:#E65100;">
+                    💡 成果指标 = 新孵化腰客1个 + 案例?个 ≥ 3 → <strong>建议至少提报2个案例</strong>，或努力追赶非去年腰客客户达标
+                </div>
+            </div>
+            <div class="section-label">🎯 努力方向</div>
+            <div class="efforts-box"><div class="effort-item">⚠️ 【腰客缺口】需再增1个腰客（当前2/3）</div><div class="effort-item">⚠️ 【日均消耗不足】当前¥11,952/天，目标¥15,000/天，缺口¥3,048</div><div class="effort-item">⚠️ 【成果缺口】26年新孵化腰客仅1个（去年腰客1个不计入），成果指标需≥3，还需补2个案例</div></div>
+            <div class="section-label">🔧 实现方式</div>
+            <div class="impl-box"><div class="impl-item">💡 当前无>=60%进度的高潜力客户，建议拓展新客或激活存量</div><div class="impl-item">💡 建议提升头部客户【初尔】(月消耗¥111,301)的投放力度</div><div class="impl-item">💡 日均需提升¥3,048，可通过扩量/提价/加投实现</div><div class="impl-item">💡 📝 建议提报2个案例来补足成果指标（新孵化腰客1 + 案例2 = 3）</div><div class="impl-item">💡 🆕 非去年腰客客户【绍兴复大口腔】(YTD进度39%，差¥61,139)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【浙江大学】(YTD进度15%，差¥85,000)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【杭州市第四机械技工学校】(YTD进度10%，差¥90,000)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【麻和友】(YTD进度3%，差¥290,376)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【绍兴富悦酒店管理有限公司】(YTD进度2%，差¥97,506)可追赶为新孵化腰客</div></div>
+            <div class="section-label">🏁 服务客户赛道分布</div>
+            <div class="race-box"><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:37.5%;"></div></div><span class="agency-race-label">客户 3 · 37.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:14.2%;"></div></div><span class="agency-race-label">消耗 3.6w · 14.2%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:12.5%;"></div></div><span class="agency-race-label">客户 1 · 12.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:44.3%;"></div></div><span class="agency-race-label">消耗 11.1w · 44.3%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:12.5%;"></div></div><span class="agency-race-label">客户 1 · 12.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.0%;"></div></div><span class="agency-race-label">消耗 0.0w · 0.0%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:12.5%;"></div></div><span class="agency-race-label">客户 1 · 12.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:23.0%;"></div></div><span class="agency-race-label">消耗 5.8w · 23.0%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:12.5%;"></div></div><span class="agency-race-label">客户 1 · 12.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:14.7%;"></div></div><span class="agency-race-label">消耗 3.7w · 14.7%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#FFB74D18;color:#FFB74D;border:1px solid #FFB74D44;">本地-加盟</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:12.5%;"></div></div><span class="agency-race-label">客户 1 · 12.5%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:3.7%;"></div></div><span class="agency-race-label">消耗 0.9w · 3.7%</span></div>
+                </div>
+            </div></div>
+            <div class="section-label">📋 客户明细（归属 8个 + 参与服务 0个）</div>
+            <table class="client-table">
+                <tr><th>客户集团</th><th>行业</th><th>赛道</th><th>归属</th><th>CRM是否录入</th><th>月消耗</th><th>日均</th><th>YTD消耗</th><th>门槛</th><th>达标</th></tr>
+                <tr>
+                <td>初尔</td><td>婚介所</td><td><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥111,301</td><td class="num">¥5,300</td>
+                <td class="num">¥493,146</td>
+                <td class="num">¥300,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>金华市莱蒽口腔</td><td>诊所</td><td><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥57,741</td><td class="num">¥2,750</td>
+                <td class="num">¥151,375</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>绍兴复大口腔</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥36,858</td><td class="num">¥1,755</td>
+                <td class="num">¥38,861</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 39%</span></td></tr><tr>
+                <td>浙江工业大学</td><td>学校-高等教育</td><td><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥13,920</td><td class="num">¥663</td>
+                <td class="num">¥38,435</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 38%</span></td></tr><tr>
+                <td>浙江大学</td><td>学校-高等教育</td><td><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥12,000</td><td class="num">¥571</td>
+                <td class="num">¥15,000</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 15%</span></td></tr><tr>
+                <td>杭州市第四机械技工学校</td><td>学校-高等教育</td><td><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥9,804</td><td class="num">¥467</td>
+                <td class="num">¥10,000</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 10%</span></td></tr><tr>
+                <td>麻和友</td><td>生活服务招商加盟</td><td><span class="race-tag" style="background:#FFB74D18;color:#FFB74D;border:1px solid #FFB74D44;">本地-加盟</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥9,373</td><td class="num">¥446</td>
+                <td class="num">¥9,624</td>
+                <td class="num">¥300,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 3%</span></td></tr><tr>
+                <td>绍兴富悦酒店管理有限公司</td><td>酒店</td><td><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥0</td><td class="num">¥0</td>
+                <td class="num">¥2,494</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 2%</span></td></tr>
+            </table>
+        </div>
+        <div class="person-card card-red" id="card-张顺生" data-agency="杭州品效" data-role="运营" data-name="张顺生" data-partner="已提报">
+            <div class="card-header">
+                <div class="card-left">
+                    <span class="person-name">张顺生</span>
+                    <span class="partner-badge partner-yes">✅ 已提报合伙人</span>
+                    <span class="role-tag role-ops">⚙️ 运营</span>
+                    <span class="agency-label">杭州品效</span>
+                </div>
+                <div class="card-right">
+                    <span class="level-badge" style="background:#78909C;">L0</span> <span class="arrow">→</span> <span class="level-badge" style="background:#42A5F5;">L1</span>
+                    <span class="promo-badge promo-nodata">🔴 无业绩</span>
+                </div>
+            </div>
+            <div style="padding:16px;text-align:center;color:#C62828;font-size:14px;">
+                <div style="font-size:40px;margin-bottom:8px;">📭</div>
+                <div style="font-weight:700;margin-bottom:6px;">该合伙人在底表中无业绩数据</div>
+                <div style="font-size:13px;color:#666;">建议立即查明人户关系绑定情况，确认客户归属是否遗漏</div>
+            </div>
+            <div class="section-label">🎯 建议</div>
+            <div class="efforts-box"><div class="effort-item">⚠️ 🔴 【无业绩数据】该合伙人已提报但在底表中无业绩数据</div></div>
+            <div class="section-label">🔧 行动项</div>
+            <div class="impl-box"><div class="impl-item">💡 建议立即查明该合伙人的人户关系绑定情况，确认是否存在客户归属遗漏或数据缺失</div></div>
+        </div>
+        <div class="person-card card-orange" id="card-蔡泽发" data-agency="杭州品效" data-role="销售" data-name="蔡泽发" data-partner="已提报">
+            <div class="card-header">
+                <div class="card-left">
+                    <span class="person-name">蔡泽发</span>
+                    <span class="partner-badge partner-yes">✅ 已提报合伙人</span>
+                    <span class="role-tag role-sales">🏷️ 销售</span>
+                    <span class="agency-label">杭州品效</span>
+                </div>
+                <div class="card-right">
+                    <span class="level-badge" style="background:#42A5F5;">L1</span> <span class="arrow">→</span> <span class="level-badge" style="background:#FFA726;">L2</span>
+                    <span class="promo-badge promo-partial">⚡ 业绩达标</span>
+                </div>
+            </div>
+            
+            <div class="card-path">
+                晋级路径：L1 → L2（销售岗：需 腰客≥3个 或 月日均消耗≥¥15,000）
+            </div>
+            <table class="indicator-table">
+                <tr class="ind-header"><th>指标</th><th>当前值</th><th>目标值</th><th>状态</th><th style="width:130px;">进度</th></tr>
+                <tr><td>🏆 城市之星腰客数</td><td class="num bold">1个</td><td class="num">3个</td><td><span class="st-miss">⏳ 缺2个</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:33.3%;background:#f44336;"></div><span class="pct-text">33%</span></div></td></tr>
+                <tr><td>📊 月日均消耗</td><td class="num bold">¥18,498</td><td class="num">¥15,000</td><td><span class="st-met">✅ 已达标</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:100%;background:#4CAF50;"></div><span class="pct-text">100%</span></div></td></tr>
+            </table>
+            
+            <div style="background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border:1px solid #FFE082;border-radius:8px;padding:12px;margin:10px 0;">
+                <div style="font-size:14px;font-weight:700;color:#F57F17;margin-bottom:8px;">📋 L2成果指标（新孵化腰客 + 案例 ≥ 3）</div>
+                <table class="indicator-table" style="margin-bottom:8px;">
+                    <tr class="ind-header"><th>指标</th><th>当前值</th><th>目标值</th><th>状态</th><th style="width:130px;">进度</th></tr>
+                    <tr><td>🆕 26年新孵化腰客</td><td class="num bold">0个</td><td class="num">3个</td><td><span class="st-miss">⏳ 需补3个案例</span></td><td><div class="pct-bar"><div class="pct-fill" style="width:0.0%;background:#f44336;"></div><span class="pct-text">0%</span></div></td></tr>
+                </table>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px;">
+                    <div>
+                        <div style="font-weight:600;color:#2E7D32;margin-bottom:4px;">✅ 新孵化腰客（0个）</div>
+                        <div style="padding:2px 0;font-size:12px;color:#FF6F00;">⚠️ 浙江云涧教育科技有限公司 (月消耗¥130,796，<b>未录CRM，暂不计入</b>)</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;color:#999;margin-bottom:4px;">❌ 去年腰客（1个，不计入）</div>
+                        <div style="padding:2px 0;font-size:12px;color:#999;text-decoration:line-through;">❌ 杭州浙杭口腔门诊部有限公司 (去年腰客，不计入成果)</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;color:#E65100;margin-bottom:4px;">🔥 非去年腰客追赶候选</div>
+                        <div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 宁波协和学校 (YTD 18%，差¥82,348)</div></div><div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 杭州贝佳齿科有限公司 (YTD 8%，差¥92,129)</div></div><div data-chase-extra="0"><div style="padding:2px 0;font-size:12px;color:#E65100;">🔥 浙江龙居门业有限公司 (YTD 2%，差¥293,554)</div></div>
+                    </div>
+                </div>
+                <div style="margin-top:8px;padding:6px 10px;background:#FFF3E0;border-radius:6px;font-size:12px;color:#E65100;">
+                    💡 成果指标 = 新孵化腰客0个 + 案例?个 ≥ 3 → <strong>建议至少提报3个案例</strong>，或努力追赶非去年腰客客户达标
+                </div>
+            </div>
+            <div class="section-label">🎯 努力方向</div>
+            <div class="efforts-box"><div class="effort-item">⚠️ 【达标腰客未及时录入CRM】1个达标腰客尚未录入CRM：浙江云涧教育科技有限公司</div><div class="effort-item">⚠️ 业绩达标（日均消耗已达标）✅</div><div class="effort-item">⚠️ 【腰客缺口】需再增2个腰客（当前1/3）</div><div class="effort-item">⚠️ 【成果缺口】26年新孵化腰客仅0个（去年腰客1个不计入），成果指标需≥3，还需补3个案例</div></div>
+            <div class="section-label">🔧 实现方式</div>
+            <div class="impl-box"><div class="impl-item">⚠️ 请推动相关达标腰客及时录入CRM，确保业绩归因完整。</div><div class="impl-item">💡 保持现有客户消耗稳定增长，防止已达标客户消耗回落</div><div class="impl-item">💡 重点攻坚【杭州萧山牙科医院有限公司】(进度85%，差¥14,840)，加大投放推动达标</div><div class="impl-item">💡 📝 建议提报3个案例来补足成果指标（新孵化腰客0 + 案例3 = 3）</div><div class="impl-item">💡 🆕 非去年腰客客户【宁波协和学校】(YTD进度18%，差¥82,348)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【杭州贝佳齿科有限公司】(YTD进度8%，差¥92,129)可追赶为新孵化腰客</div><div class="impl-item">💡 🆕 非去年腰客客户【浙江龙居门业有限公司】(YTD进度2%，差¥293,554)可追赶为新孵化腰客</div></div>
+            <div class="section-label">🏁 服务客户赛道分布</div>
+            <div class="race-box"><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:50.0%;"></div></div><span class="agency-race-label">客户 3 · 50.0%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:61.6%;"></div></div><span class="agency-race-label">消耗 23.9w · 61.6%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:16.7%;"></div></div><span class="agency-race-label">客户 1 · 16.7%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:4.3%;"></div></div><span class="agency-race-label">消耗 1.7w · 4.3%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:16.7%;"></div></div><span class="agency-race-label">客户 1 · 16.7%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:33.7%;"></div></div><span class="agency-race-label">消耗 13.1w · 33.7%</span></div>
+                </div>
+            </div><div class="agency-race-row">
+                <div class="agency-race-name"><span class="race-tag" style="background:#FFB74D18;color:#FFB74D;border:1px solid #FFB74D44;">本地-加盟</span></div>
+                <div class="agency-race-bars">
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill client-fill" style="width:16.7%;"></div></div><span class="agency-race-label">客户 1 · 16.7%</span></div>
+                    <div class="agency-race-bar-line"><div class="agency-race-bar-track"><div class="agency-race-bar-fill spend-fill" style="width:0.5%;"></div></div><span class="agency-race-label">消耗 0.2w · 0.5%</span></div>
+                </div>
+            </div></div>
+            <div class="section-label">📋 客户明细（归属 6个 + 参与服务 0个）</div>
+            <table class="client-table">
+                <tr><th>客户集团</th><th>行业</th><th>赛道</th><th>归属</th><th>CRM是否录入</th><th>月消耗</th><th>日均</th><th>YTD消耗</th><th>门槛</th><th>达标</th></tr>
+                <tr>
+                <td>杭州浙杭口腔门诊部有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥202,031</td><td class="num">¥9,621</td>
+                <td class="num">¥725,175</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>浙江云涧教育科技有限公司</td><td>会展活动</td><td><span class="race-tag" style="background:#2196F318;color:#2196F3;border:1px solid #2196F344;">本地-商服</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥130,796</td><td class="num">¥6,228</td>
+                <td class="num">¥130,799</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-met">✅ 腰客达标</span></td></tr><tr>
+                <td>杭州萧山牙科医院有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥30,456</td><td class="num">¥1,450</td>
+                <td class="num">¥85,160</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-hot">🔥 85%</span></td></tr><tr>
+                <td>宁波协和学校</td><td>学校-义务教育</td><td><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#2E7D32;font-weight:600;">✓</span></td>
+                <td class="num">¥16,652</td><td class="num">¥793</td>
+                <td class="num">¥17,652</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 18%</span></td></tr><tr>
+                <td>杭州贝佳齿科有限公司</td><td>专业型医院</td><td><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥6,753</td><td class="num">¥322</td>
+                <td class="num">¥7,871</td>
+                <td class="num">¥100,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 8%</span></td></tr><tr>
+                <td>浙江龙居门业有限公司</td><td>家装建材招商加盟</td><td><span class="race-tag" style="background:#FFB74D18;color:#FFB74D;border:1px solid #FFB74D44;">本地-加盟</span></td>
+                <td><span class="own-badge own-yes">归属</span></td>
+                <td style="text-align:center;"><span style="color:#E65100;font-weight:600;">✗</span></td>
+                <td class="num">¥1,780</td><td class="num">¥85</td>
+                <td class="num">¥6,446</td>
+                <td class="num">¥300,000</td>
+                <td style="text-align:center;"><span class="st-miss"> 2%</span></td></tr>
+            </table>
+        </div>
+                </div>
+            </details>
+        </div>
+        
+        <div class="section">
+            <h2>⚠️ 多人参与服务客户</h2>
+            <table class="multi-table">
+                <thead><tr>
+                    <th style="min-width:120px;">客户集团</th><th style="min-width:80px;">赛道</th>
+                    <th style="min-width:70px;">姓名</th><th style="min-width:60px;">岗位</th>
+                    <th style="min-width:60px;">归属关系</th><th style="min-width:90px;text-align:right;">月消耗</th>
+                    <th style="min-width:80px;text-align:right;">日均消耗</th>
+                </tr></thead>
+                <tbody><tr style="background:#fff;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">杭州浙杭口腔门诊部有限公司</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">贾永慧</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥466,904</td>
+                    <td class="num" style="padding:6px 8px;">¥22,234</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">蔡泽发</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥202,031</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥9,621</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">衢州航雅健康管理有限公司柯城杭成口腔诊所</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#F0629218;color:#F06292;border:1px solid #F0629244;">健康-其他</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥67,496</td>
+                    <td class="num" style="padding:6px 8px;">¥3,214</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥53,294</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥2,538</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">舟山定海泰康拜博口腔门诊部有限公司</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥35,048</td>
+                    <td class="num" style="padding:6px 8px;">¥1,669</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥26,206</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥1,248</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">杭州萧山牙科医院有限公司</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">蔡泽发</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥30,456</td>
+                    <td class="num" style="padding:6px 8px;">¥1,450</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥27,456</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥1,307</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="3" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">浙江中旅湘湖商业管理有限公司</td>
+                    <td rowspan="3" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥16,996</td>
+                    <td class="num" style="padding:6px 8px;">¥809</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥12,991</td>
+                    <td class="num" style="padding:6px 8px;">¥619</td>
+                </tr><tr style="background:#fff;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-no">参与服务</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥549</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥26</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">宁波协和学校</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">蔡泽发</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥16,652</td>
+                    <td class="num" style="padding:6px 8px;">¥793</td>
+                </tr><tr style="background:#fff;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥4,205</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥200</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">浙江工业大学</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">张志刚</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥13,920</td>
+                    <td class="num" style="padding:6px 8px;">¥663</td>
+                </tr><tr style="background:#fff;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥7,736</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥368</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">浙江大学</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#00BCD418;color:#00BCD4;border:1px solid #00BCD444;">教育</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">张志刚</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥12,000</td>
+                    <td class="num" style="padding:6px 8px;">¥571</td>
+                </tr><tr style="background:#fff;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥12,000</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥571</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td rowspan="3" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">温州市嘉雅餐饮管理有限公司</td>
+                    <td rowspan="3" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#42A5F518;color:#42A5F5;border:1px solid #42A5F544;">本地-综服</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥9,999</td>
+                    <td class="num" style="padding:6px 8px;">¥476</td>
+                </tr><tr style="background:#fff;">
+                    <td style="font-weight:600;padding:6px 8px;">刘鑫玉</td>
+                    <td style="padding:6px 8px;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥2,086</td>
+                    <td class="num" style="padding:6px 8px;">¥99</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">叶思思</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-no">参与服务</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥1,501</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥71</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">杭州贝佳齿科有限公司</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#E91E6318;color:#E91E63;border:1px solid #E91E6344;">健康-专业</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">蔡泽发</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥6,753</td>
+                    <td class="num" style="padding:6px 8px;">¥322</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥4,388</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥209</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">银泰商业管理集团有限公司东阳分公司</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#64B5F618;color:#64B5F6;border:1px solid #64B5F644;">本地-零售</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥3,999</td>
+                    <td class="num" style="padding:6px 8px;">¥190</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥4,999</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥238</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">浙江顺锦金钻酒店管理有限公司</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥4,985</td>
+                    <td class="num" style="padding:6px 8px;">¥237</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥1,100</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥52</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="2" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">温州俊奇经济发展有限公司</td>
+                    <td rowspan="2" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#66BB6A18;color:#66BB6A;border:1px solid #66BB6A44;">家居-会展</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥2,775</td>
+                    <td class="num" style="padding:6px 8px;">¥132</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">刘鑫玉</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥555</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥26</td>
+                </tr><tr style="background:#fff;">
+                    <td rowspan="3" style="font-weight:700;border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;">乐清市汤一臣酒店管理有限公司</td>
+                    <td rowspan="3" style="border-bottom:2px solid #e0e0e0;vertical-align:top;padding:8px;"><span class="race-tag" style="background:#FFA72618;color:#FFA726;border:1px solid #FFA72644;">本地-旅游</span></td>
+                    <td style="font-weight:600;padding:6px 8px;">叶思思</td>
+                    <td style="padding:6px 8px;"><span style="background:#E3F2FD;color:#1565C0;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">🏷️ 销售</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥1,741</td>
+                    <td class="num" style="padding:6px 8px;">¥83</td>
+                </tr><tr style="background:#FFFDE7;">
+                    <td style="font-weight:600;padding:6px 8px;">刘鑫玉</td>
+                    <td style="padding:6px 8px;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;"><span class="own-badge own-yes">归属</span></td>
+                    <td class="num" style="padding:6px 8px;">¥215</td>
+                    <td class="num" style="padding:6px 8px;">¥10</td>
+                </tr><tr style="background:#fff;">
+                    <td style="font-weight:600;padding:6px 8px;border-bottom:2px solid #e0e0e0;">叶思思</td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span style="background:#FFF3E0;color:#E65100;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:600;">⚙️ 运营</span></td>
+                    <td style="padding:6px 8px;border-bottom:2px solid #e0e0e0;"><span class="own-badge own-no">参与服务</span></td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥177</td>
+                    <td class="num" style="padding:6px 8px;border-bottom:2px solid #e0e0e0;">¥8</td>
+                </tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+window.__canList = [];
+window.__oneShort = ["\u5218\u946b\u7389", "\u8521\u6cfd\u53d1"];
+window.__bothMiss = ["\u53f6\u601d\u601d", "\u5f20\u5fd7\u521a"];
+window.__notReportedList = [];
+window.__noDataList = ["\u5f20\u987a\u751f"];
+/* 城市之星合伙人晋级报告 · 公共交互脚本 */
+/* 排版固定，修改此文件即可全局生效，不需要改 Python */
+
+function filterRole(role) {
+    document.querySelectorAll('.sidebar-filters .filter-btn').forEach(b => {
+        if (['全部','🏷️ 销售','⚙️ 运营'].includes(b.textContent)) b.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+        if (role === 'all' || item.dataset.role === role) { item.classList.remove('hidden'); }
+        else { item.classList.add('hidden'); }
+    });
+}
+
+function filterStatus(st) {
+    document.querySelectorAll('.sidebar-filters .filter-btn').forEach(b => {
+        if (['🎯 可晋级','⚡ 业绩达标','⏳ 业绩未达','📋 未提报','📭 无业绩'].includes(b.textContent)) b.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    if (st) ensureAppendixOpen();
+    // __FILTER_DATA__ 会被 Python 注入
+    const canPromote = window.__canList || [];
+    const oneShort = window.__oneShort || [];
+    const bothMiss = window.__bothMiss || [];
+    const unreported = window.__notReportedList || [];
+    const noData = window.__noDataList || [];
+    let targetNames = [];
+    if (st === 'promote') targetNames = canPromote;
+    else if (st === 'partial') targetNames = oneShort;
+    else if (st === 'miss') targetNames = bothMiss;
+    else if (st === 'unreported') targetNames = unreported;
+    else if (st === 'nodata') targetNames = noData;
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+        const name = item.querySelector('.si-name').textContent.replace(/^[📭⚠]/,'');
+        if (targetNames.includes(name)) { item.classList.remove('hidden'); }
+        else { item.classList.add('hidden'); }
+    });
+}
+
+function ensureAppendixOpen() {
+    document.querySelectorAll('.appendix-details').forEach(box => box.open = true);
+}
+
+function filterAgency(agency) {
+    document.querySelectorAll('.agency-tab').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    if (agency !== 'all') ensureAppendixOpen();
+    document.querySelectorAll('.person-card').forEach(card => {
+        if (agency === 'all' || card.dataset.agency === agency) { card.classList.remove('hidden'); }
+        else { card.classList.add('hidden'); }
+    });
+}
+
+let _searchTerm = '';
+function searchPerson(query) {
+    _searchTerm = query.trim().toLowerCase();
+    if (_searchTerm) ensureAppendixOpen();
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+        const name = (item.querySelector('.si-name') || {}).textContent || '';
+        if (!_searchTerm || name.toLowerCase().includes(_searchTerm)) {
+            item.classList.remove('search-hidden');
+        } else {
+            item.classList.add('search-hidden');
+        }
+    });
+    document.querySelectorAll('.person-card').forEach(card => {
+        const cardName = card.dataset.name || '';
+        if (!_searchTerm || cardName.toLowerCase().includes(_searchTerm)) {
+            card.classList.remove('search-hidden');
+        } else {
+            card.classList.add('search-hidden');
+        }
+    });
+}
+
+function scrollToCard(pid) {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    const card = document.getElementById('card-' + pid);
+    if (card) {
+        const appendix = card.closest('.appendix-details');
+        if (appendix) appendix.open = true;
+        card.classList.remove('hidden');
+        card.classList.remove('search-hidden');
+        card.scrollIntoView({ behavior:'smooth', block:'start' });
+        card.style.boxShadow = '0 0 0 3px #1a237e44';
+        setTimeout(() => card.style.boxShadow = '', 2000);
+    }
+}
+
+</script>
+</body>
+</html>
